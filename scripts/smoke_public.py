@@ -40,11 +40,18 @@ async def test_real_chat():
         assert first.get("type") == "ready", "WebSocket handshake did not complete"
         await ws.send(json.dumps({"type": "message", "text": "Could you clarify how this demo works?"}))
         seen_deltas = 0
-        for _ in range(90):
-            data = json.loads(await asyncio.wait_for(ws.recv(), 40))
-            if data.get("type") == "answer_delta":
+        seen_types = {}
+        deadline = asyncio.get_running_loop().time() + 100
+        for _ in range(2000):
+            remaining = deadline - asyncio.get_running_loop().time()
+            if remaining <= 0:
+                break
+            data = json.loads(await asyncio.wait_for(ws.recv(), min(remaining, 40)))
+            kind = data.get("type")
+            seen_types[kind] = seen_types.get(kind, 0) + 1
+            if kind == "answer_delta":
                 seen_deltas += 1
-            if data.get("type") == "answer":
+            if kind == "answer":
                 assert data.get("source") == "hosted_groq_unverified", (
                     "Hosted provider failed or demo quota was reached; scripted fallback used"
                 )
@@ -52,9 +59,11 @@ async def test_real_chat():
                 assert seen_deltas, "No provider response tokens streamed"
                 print("Real hosted model streaming succeeded, with no secret logged.")
                 return
-            if data.get("type") == "error":
+            if kind == "error":
                 raise RuntimeError("Public chat returned an application error")
-        raise RuntimeError("No final response received")
+        raise RuntimeError(
+            "No final response received; event counts (no content): " + str(seen_types)
+        )
 
 
 if __name__ == "__main__":
