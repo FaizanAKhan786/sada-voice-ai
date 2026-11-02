@@ -14,6 +14,7 @@ from contextlib import suppress
 from fastapi import WebSocket, WebSocketDisconnect
 
 from app.engine import Session, route_message
+from app.public_demo import TurnLimiter, public_demo_enabled
 from app.streaming import AudioSegmenter
 
 
@@ -25,6 +26,7 @@ async def handle_live(socket: WebSocket, *, stt_enabled: bool, ollama_enabled: b
     send_lock = asyncio.Lock()
     active: asyncio.Task | None = None
     turn_counter = 0
+    limiter = TurnLimiter()
 
     async def send(payload: dict):
         async with send_lock:
@@ -154,6 +156,9 @@ async def handle_live(socket: WebSocket, *, stt_enabled: bool, ollama_enabled: b
                         await cancel_active()
                         active = asyncio.create_task(process_pcm(pcm))
                 elif action == "message":
+                    if public_demo_enabled() and not limiter.allow():
+                        await send({"type": "error", "message": "Demo request limit reached. Please retry shortly."})
+                        continue
                     text = payload.get("text")
                     if not isinstance(text, str) or not text.strip() or len(text) > 1500:
                         raise ValueError("Message must contain 1–1500 characters")

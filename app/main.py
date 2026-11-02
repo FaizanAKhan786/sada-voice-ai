@@ -14,6 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.engine import ORDERS, Session, route_message
+from app.public_demo import TurnLimiter, origin_allowed, public_demo_enabled
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
@@ -93,9 +94,12 @@ async def transcribe(file: UploadFile = File(...), language: str = "auto"):
 
 @app.websocket("/ws")
 async def websocket_chat(socket: WebSocket):
-    # For a non-demo deployment, authenticate this connection and validate Origin.
+    if not origin_allowed(socket.headers):
+        await socket.close(code=1008, reason="Origin not allowed")
+        return
     await socket.accept()
     session = Session()
+    limiter = TurnLimiter()
     await socket.send_json({"type": "ready", "message": "Connected to SADA demo", "language": session.language})
     try:
         while True:
@@ -120,6 +124,9 @@ async def websocket_chat(socket: WebSocket):
                 msg = payload["text"]
                 if not msg.strip() or len(msg) > 1500:
                     await socket.send_json({"type": "error", "message": "Message must contain 1–1500 characters"})
+                    continue
+                if public_demo_enabled() and not limiter.allow():
+                    await socket.send_json({"type": "error", "message": "Demo request limit reached. Please retry shortly."})
                     continue
                 started = time.perf_counter()
                 if _graph is None:
@@ -152,6 +159,9 @@ async def websocket_chat(socket: WebSocket):
 
 @app.websocket("/ws/live")
 async def websocket_live(socket: WebSocket):
+    if not origin_allowed(socket.headers):
+        await socket.close(code=1008, reason="Origin not allowed")
+        return
     from app.live import handle_live
 
     def count(intent: str) -> None:

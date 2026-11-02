@@ -46,6 +46,12 @@ The order lookup and handoff screens use invented data, so the demo works withou
 
 Python, FastAPI, WebSockets, JavaScript, AudioWorklet, faster-whisper, WebRTC VAD, Ollama and optional LangGraph. The default setup needs only the Python web dependencies; speech and LLM models are opt-in.
 
+## Public demo deployment (Render)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/FaizanAKhan786/sada-voice-ai)
+
+The included [`render.yaml`](render.yaml) deploys the FastAPI app, web dashboard, and synthetic support workflows to a public HTTPS endpoint. **This is a lightweight demonstration:** browser speech features work where supported, while server-side Whisper/VAD and local Ollama inference are disabled. Render must be connected and approved in the repository owner's account before a public URL exists. See [public deployment notes](docs/public-deployment.md) for safeguards and limitations.
+
 ## Quick start (text and browser-based voice)
 
 ```bash

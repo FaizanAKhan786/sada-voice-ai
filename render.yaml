@@ -1,0 +1,22 @@
+# Public, synthetic-data portfolio demonstration.
+# Browser recognition/voice synthesis use supported browser capabilities.
+# Offline Whisper, streaming server-side VAD, and Ollama are not bundled.
+services:
+  - type: web
+    name: sada-voice-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: PUBLIC_DEMO_MODE
+        value: "1"
+      - key: ENABLE_STT
+        value: "0"
+      - key: ENABLE_OLLAMA
+        value: "0"
+      - key: USE_LANGGRAPH
+        value: "0"
