@@ -1,0 +1,30 @@
+{"text":"Hi","intent":"greeting","language":"en"}
+{"text":"Hello!","intent":"greeting","language":"en"}
+{"text":"السلام عليكم","intent":"greeting","language":"ar"}
+{"text":"مرحبا","intent":"greeting","language":"ar"}
+{"text":"Where is my order?","intent":"order_status","language":"en"}
+{"text":"Track ORD-1001","intent":"order_status","order_id":"ORD-1001"}
+{"text":"What is the status of ORD-1002?","intent":"order_status","order_id":"ORD-1002"}
+{"text":"My parcel isn't here","intent":"order_status"}
+{"text":"وين طلبي ORD-١٠٠٣؟","intent":"order_status","language":"ar","order_id":"ORD-1003"}
+{"text":"تتبع الطلب ORD-1001","intent":"order_status","language":"ar","order_id":"ORD-1001"}
+{"text":"أين شحنتي؟","intent":"order_status","language":"ar"}
+{"text":"What are the returns rules?","intent":"returns"}
+{"text":"Can I return an item?","intent":"returns"}
+{"text":"I'd like to exchange a product","intent":"returns"}
+{"text":"كيف يتم إرجاع المنتج؟","intent":"returns","language":"ar"}
+{"text":"أريد استبدال المنتج","intent":"returns","language":"ar"}
+{"text":"Refund policy please","intent":"refunds"}
+{"text":"When will I get a refund?","intent":"refunds"}
+{"text":"How do I get my money back?","intent":"refunds"}
+{"text":"أريد استرداد المبلغ","intent":"refunds","language":"ar"}
+{"text":"كم مدة استرجاع المبلغ؟","intent":"refunds","language":"ar"}
+{"text":"How long is shipping?","intent":"shipping"}
+{"text":"What is the delivery time?","intent":"shipping"}
+{"text":"كم مدة التوصيل؟","intent":"shipping","language":"ar"}
+{"text":"I want a human agent","intent":"handoff"}
+{"text":"Please escalate this","intent":"handoff"}
+{"text":"Talk to a representative","intent":"handoff"}
+{"text":"اريد موظف خدمة العملاء","intent":"handoff","language":"ar"}
+{"text":"Can you write poetry?","intent":"general"}
+{"text":"ما هو الطقس؟","intent":"general","language":"ar"}

@@ -1,0 +1,2 @@
+-r requirements-stt.txt
+webrtcvad-wheels>=2.0.14,<3

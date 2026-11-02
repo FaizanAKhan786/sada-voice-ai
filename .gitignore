@@ -1,0 +1,21 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+*.pyc
+.DS_Store
+
+# Local models, recordings, credentials and build output
+models/
+recordings/
+*.wav
+*.mp3
+*.flac
+*.webm
+.env.*
+!.env.example
+coverage.xml
+.coverage
+htmlcov/
+dist/
+build/

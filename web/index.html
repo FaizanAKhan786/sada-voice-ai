@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="SADA is a bilingual customer support voice agent portfolio demo, backed by synthetic data.">
+  <title>SADA • AI Voice Support</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark"><span class="brand-spark">✦</span></div><div><strong>SADA<span class="brand-period">.</span></strong><span>AI VOICE STUDIO</span></div></div>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="nav" aria-label="Workspace navigation">
+        <a class="nav-link selected" href="#console" aria-current="page"><span class="nav-icon">◫</span> Agent console <span class="nav-dot"></span></a>
+        <a class="nav-link" href="#sample-orders"><span class="nav-icon">▤</span> Sample orders</a>
+        <a class="nav-link" href="#activity"><span class="nav-icon">◷</span> Session activity</a>
+      </nav>
+      <div class="sidebar-label second-label">ENVIRONMENT</div>
+      <div class="env-card"><span class="env-dot"></span><div><strong>Demo sandbox</strong><small>Synthetic data only</small></div></div>
+      <div class="side-spacer"></div>
+      <div class="sidebar-bottom">
+        <div class="side-avatar">AI</div>
+        <div class="side-profile"><strong>Portfolio environment</strong><small>Local deployment</small></div>
+        <span class="sidebar-chevron">⌄</span>
+      </div>
+    </aside>
+
+    <main class="main" id="console">
+      <header class="topbar">
+        <div class="breadcrumbs">Workspace <span>/</span> <strong>Agent console</strong></div>
+        <div class="top-actions"><span class="top-live"><span class="green-pulse"></span><span id="connectionTop">Connecting</span></span><span class="top-divider"></span><span class="demo-badge">DEMO BUILD v0.2</span></div>
+      </header>
+      <section class="workspace">
+        <div class="page-title-row"><div><div class="eyebrow">CONVERSATIONAL AI / VOICE OPERATIONS</div><h1>Voice agent studio <span class="wave-emoji">✳</span></h1><p>Manage a bilingual customer support conversation in real time.</p></div><button class="btn btn-ghost" id="resetBtn" type="button" title="Start a new session"><span>↻</span> New session</button></div>
+
+        <div class="metrics" id="activity">
+          <div class="metric-card"><div class="metric-head"><span>Conversation turns</span><span class="metric-icon purple">◎</span></div><div class="metric-num" id="metricTurns">0</div><div class="metric-foot"><span class="metric-foot-dot"></span> Current server run</div></div>
+          <div class="metric-card"><div class="metric-head"><span>Order lookups</span><span class="metric-icon blue">▤</span></div><div class="metric-num" id="metricOrders">0</div><div class="metric-foot">Synthetic records only</div></div>
+          <div class="metric-card"><div class="metric-head"><span>Demo handoffs</span><span class="metric-icon orange">↗</span></div><div class="metric-num" id="metricHandoffs">0</div><div class="metric-foot">No live agent connected</div></div>
+        </div>
+
+        <div class="workspace-grid">
+          <section class="chat-card" aria-label="Voice assistant conversation">
+            <div class="chat-header"><div class="bot-avatar"><span>✦</span></div><div class="chat-heading"><div class="agent-title">SADA Assistant <span class="ai-chip">AI AGENT</span></div><div class="agent-sub"><span class="green-pulse small"></span><span id="connectionStatus">Connecting to agent…</span><span class="sub-separator">·</span> Arabic & English</div></div><div class="chat-tools"><label class="sr-only" for="languageSelect">Conversation language</label><select id="languageSelect" aria-label="Conversation language"><option value="auto">Auto language</option><option value="en">English</option><option value="ar">العربية</option></select><button id="soundBtn" type="button" title="Toggle spoken replies" aria-label="Toggle spoken replies" class="small-icon-button on">♫</button><button id="exportBtn" type="button" title="Export transcript" aria-label="Export transcript" class="small-icon-button">⇩</button></div></div>
+            <div class="chat-body" id="messages" role="log" aria-live="polite" aria-relevant="additions">
+              <div class="day-stamp"><span>NEW CONVERSATION</span></div>
+              <div class="message-row bot"><div class="message-avatar">✦</div><div class="message-group"><div class="sender-name">SADA <span>•</span> Just now</div><div class="bubble bot-bubble">Hi there! 👋 I'm SADA, your bilingual AI support assistant.<br><br>I can check a demo order, explain our example return policy, or simulate a transfer to a human agent. What would you like to do?</div><span class="message-label">DEMO ASSISTANT</span></div></div>
+            </div>
+            <div class="chat-bottom">
+              <div class="suggestions" aria-label="Suggested messages"><button type="button" data-prompt="Where is my order ORD-1001?">◉ Track an order</button><button type="button" data-prompt="What is the return policy?">⟲ Return policy</button><button type="button" data-prompt="Can I talk to a human agent?">♙ Human handoff</button></div>
+              <div class="composer"><textarea id="chatInput" rows="1" maxlength="1500" placeholder="Ask SADA anything about orders or support..." aria-label="Your message"></textarea><div class="composer-actions"><button type="button" id="micBtn" aria-label="Start speaking" title="Speak your message" class="mic-button"><span class="mic-glyph">🎙</span></button><button type="button" id="sendBtn" aria-label="Send message" class="send-button"><span>➤</span></button></div></div>
+              <div class="composer-footer"><span id="inputHelp"><span class="kbd">Enter</span> to send, <span class="kbd">Shift + Enter</span> for a new line</span><span class="voice-state" id="voiceState"><span class="voice-dot"></span> Voice ready</span></div>
+            </div>
+          </section>
+
+          <aside class="right-column">
+            <section class="voice-panel"><div class="panel-top"><span class="panel-kicker">VOICE INTERFACE</span><span class="panel-ellipsis">•••</span></div><div class="orb-wrapper"><div class="orb-glow"></div><div class="orb" id="voiceOrb"><span>✳</span></div><span class="orb-particle p1"></span><span class="orb-particle p2"></span><span class="orb-particle p3"></span></div><h2 id="voiceHeadline">Ready to listen</h2><p id="voiceDescription">Select the microphone to start a voice conversation.</p><div class="waveform" id="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="voice-panel-footer"><div><span class="panel-muted">INPUT</span><select id="inputModeSelect" aria-label="Speech input mode"><option value="browser">Browser speech</option><option value="local">Local Whisper · push to talk</option><option value="stream">Live streaming · local VAD</option></select></div><div><span class="panel-muted">OUTPUT</span><strong id="voiceOutputMode">Speech synthesis</strong></div></div></section>
+
+            <section class="orders-panel" id="sample-orders"><div class="panel-section-head"><div><h3>Test orders</h3><p>Try these synthetic records</p></div><span class="tiny-demo">SAMPLE</span></div><div id="ordersList" class="orders-list"><span class="loading-text">Loading demo data…</span></div></section>
+            <section class="info-panel"><div class="info-icon">ⓘ</div><div><strong>Portfolio demonstration</strong><p>This is not connected to a real store, customer database, payment system, or live support team. Browser speech recognition may use a browser vendor's service. Live streaming uses local speech processing and is an experimental demo.</p></div></section>
+          </aside>
+        </div>
+        <footer class="footer"><span>© SADA Voice AI • Built with FastAPI + WebSockets</span><span>English / العربية <span class="footer-dot">·</span> Demo environment</span></footer>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
