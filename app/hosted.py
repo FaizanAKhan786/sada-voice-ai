@@ -17,7 +17,7 @@ import httpx
 from app.llm import make_messages
 
 GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+DEFAULT_MODEL = "openai/gpt-oss-120b"
 GENERATIVE_INTENTS = frozenset({"general", "greeting", "returns", "refunds", "shipping"})
 
 
@@ -65,13 +65,18 @@ async def stream_hosted(
     if not hosted_enabled():
         raise RuntimeError("Hosted LLM is not configured")
 
+    model = os.getenv("GROQ_MODEL", DEFAULT_MODEL)
     body = {
-        "model": os.getenv("GROQ_MODEL", DEFAULT_MODEL),
+        "model": model,
         "messages": make_messages(question, (previous_turns or [])[-4:]),
         "stream": True,
         "temperature": 0.2,
-        "max_tokens": 280,
+        "max_completion_tokens": 512,
     }
+    # GPT-OSS reasoning tokens must not consume the entire output allowance
+    # or be displayed to users. Other providers/models may not support these.
+    if model.startswith("openai/gpt-oss-"):
+        body.update(reasoning_effort="low", include_reasoning=False)
     headers = {
         "Authorization": "Bearer " + os.environ["GROQ_API_KEY"].strip(),
         "Content-Type": "application/json",

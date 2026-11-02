@@ -9,7 +9,7 @@ SADA supports optional streamed Groq responses, with server-side API calls only.
 3. Save and deploy. Open `https://sada-voice-ai.onrender.com/api/config`; `hosted_llm_enabled` should be `true` once the server has a key and the setting is enabled.
 4. Test a generative question such as: "Could you walk me through the sample return policy in plain English?" and an Arabic follow-up. Confirm the assistant gives coherent answers, does not claim to know real order details and does not invent actions.
 
-The default model is `llama-3.3-70b-versatile` (overridable with `GROQ_MODEL`). The provider is called using the OpenAI-compatible streaming completions endpoint `https://api.groq.com/openai/v1/chat/completions`.
+The default model is `openai/gpt-oss-120b` (overridable with `GROQ_MODEL`). The provider is called using the OpenAI-compatible streaming completions endpoint `https://api.groq.com/openai/v1/chat/completions`.
 
 ## Behavior and safeguards
 

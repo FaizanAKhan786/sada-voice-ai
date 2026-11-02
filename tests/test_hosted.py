@@ -24,6 +24,9 @@ def test_groq_streaming_uses_server_secret_and_bounded_context(monkeypatch):
         sent.append(data)
         assert data['stream'] is True
         assert data['model'] == hosted.DEFAULT_MODEL
+        assert data['max_completion_tokens'] == 512
+        assert data['reasoning_effort'] == 'low'
+        assert data['include_reasoning'] is False
         assert data['messages'][0]['role'] == 'system'
         assert 'demo' in data['messages'][0]['content'].lower()
         assert data['messages'][-1]['content'] == 'Explain the sample refunds'

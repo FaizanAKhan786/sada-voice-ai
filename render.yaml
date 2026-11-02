@@ -20,5 +20,7 @@ services:
         value: "0"
       - key: ENABLE_HOSTED_LLM
         value: "1"
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
       - key: USE_LANGGRAPH
         value: "0"
