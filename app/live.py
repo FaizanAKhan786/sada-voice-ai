@@ -14,6 +14,7 @@ from contextlib import suppress
 from fastapi import WebSocket, WebSocketDisconnect
 
 from app.engine import Session, route_message
+from app.hosted import GENERATIVE_INTENTS, HOSTED_QUOTA, hosted_enabled, stream_hosted
 from app.public_demo import TurnLimiter, public_demo_enabled
 from app.streaming import AudioSegmenter
 
@@ -53,7 +54,34 @@ async def handle_live(socket: WebSocket, *, stt_enabled: bool, ollama_enabled: b
             else:
                 state = await asyncio.to_thread(graph.invoke, {"text": text, "session": session})
                 answer = state["result"]
-            if ollama_enabled and answer["intent"] == "general":
+            if hosted_enabled() and answer["intent"] in GENERATIVE_INTENTS:
+                # The deterministic engine remains authoritative for orders and
+                # handoffs. Hosted AI can phrase/clarify synthetic FAQs only.
+                if not HOSTED_QUOTA.allow():
+                    answer["source"] = "scripted_hosted_quota"
+                else:
+                    context = session.history[:-2]
+                    full = ""
+                    sent_start = False
+                    try:
+                        async for token in stream_hosted(text, context):
+                            if not sent_start:
+                                await send({"type": "answer_start", "turn_id": turn_id, "language": answer["language"]})
+                                sent_start = True
+                            full += token
+                            await send({"type": "answer_delta", "turn_id": turn_id, "delta": token})
+                        if not full.strip():
+                            raise RuntimeError("Empty hosted answer")
+                        answer["text"] = full.strip()
+                        answer["source"] = "hosted_groq_unverified"
+                        session.history[-1]["text"] = answer["text"]
+                    except asyncio.CancelledError:
+                        raise
+                    except Exception:
+                        # Existing browser code replaces partial streamed text
+                        # with the safe deterministic response at final event.
+                        answer["source"] = "scripted_hosted_unavailable"
+            elif ollama_enabled and answer["intent"] == "general":
                 # Routing has already appended the scripted answer to history.
                 context = session.history[:-2]
                 from app.llm import stream_ollama

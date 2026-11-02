@@ -125,7 +125,7 @@ function connect() {
         streamingMessage.item.text = payload.text;
         streamingMessage.item.intent = payload.intent;
         streamingMessage.label.textContent = (payload.intent || 'ASSISTANT').toUpperCase().replaceAll('_', ' ');
-        if (payload.source !== 'local_ollama_unverified') {
+        if (!['local_ollama_unverified', 'hosted_groq_unverified'].includes(payload.source)) {
           // A failed model stream must replace partially spoken content.
           cancelSpeech(); speak(payload.text, payload.language);
           speechBuffer = '';
@@ -329,6 +329,10 @@ async function initData() {
   try {
     const [configResponse, ordersResponse] = await Promise.all([fetch('/api/config'), fetch('/api/demo-orders')]);
     if (configResponse.ok) config = await configResponse.json();
+    const modelNotice = document.getElementById('modelStatus');
+    if (modelNotice) modelNotice.textContent = config.hosted_llm_enabled
+      ? 'AI responses enabled · Hosted Groq model · Synthetic policies only'
+      : 'Scripted demo replies · Hosted AI awaiting server API key';
     if (ordersResponse.ok) {
       const orders = await ordersResponse.json();
       els.ordersList.textContent = '';

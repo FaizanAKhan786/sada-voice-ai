@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.engine import ORDERS, Session, route_message
 from app.public_demo import TurnLimiter, origin_allowed, public_demo_enabled
+from app.hosted import GENERATIVE_INTENTS, HOSTED_QUOTA, hosted_enabled, answer_hosted
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
@@ -46,7 +47,7 @@ def health():
 
 @app.get("/api/config")
 def config():
-    return {"stt_enabled": STT_ENABLED, "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
+    return {"stt_enabled": STT_ENABLED, "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "hosted_llm_enabled": hosted_enabled(), "model_provider": "Groq" if hosted_enabled() else None, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
 
 
 @app.get("/api/demo-orders")
@@ -136,7 +137,18 @@ async def websocket_chat(socket: WebSocket):
                     answer = state["result"]
                 # LLM mode only embellishes the general FAQ path. Never let
                 # free-form generation override sample order records or actions.
-                if OLLAMA_ENABLED and answer["intent"] == "general":
+                if hosted_enabled() and answer["intent"] in GENERATIVE_INTENTS:
+                    if HOSTED_QUOTA.allow():
+                        try:
+                            previous = session.history[:-2]
+                            answer["text"] = await answer_hosted(msg, previous)
+                            answer["source"] = "hosted_groq_unverified"
+                            session.history[-1]["text"] = answer["text"]
+                        except Exception:
+                            answer["source"] = "scripted_hosted_unavailable"
+                    else:
+                        answer["source"] = "scripted_hosted_quota"
+                elif OLLAMA_ENABLED and answer["intent"] == "general":
                     try:
                         from app.llm import answer_with_ollama
                         generated = await answer_with_ollama(msg)

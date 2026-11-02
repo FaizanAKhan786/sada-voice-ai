@@ -18,5 +18,7 @@ services:
         value: "0"
       - key: ENABLE_OLLAMA
         value: "0"
+      - key: ENABLE_HOSTED_LLM
+        value: "1"
       - key: USE_LANGGRAPH
         value: "0"

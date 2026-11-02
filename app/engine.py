@@ -47,7 +47,7 @@ def classify_intent(text: str, awaiting_order: bool = False) -> str:
     if awaiting_order and extract_order_id(t):
         return "order_status"
     patterns = [
-        ("handoff", r"\b(human|person|representative|live agent|supervisor|talk to agent|escalat\w*)\b|موظف|بشري|تحويل|خدمة العملاء|ممثل"),
+        ("handoff", r"\b(human|person|representative|(?:real|human|support|customer service|live)\s+agent|supervisor|talk to (?:an? )?agent|escalat\w*)\b|موظف|بشري|تحويل|خدمة العملاء|ممثل"),
         ("refunds", r"\b(refunds?|money back|reimburse\w*)\b|استرداد|استرجاع المبلغ|استعادة المبلغ"),
         ("returns", r"\b(returns?|exchanges?|replacement)\b|إرجاع|ارجاع|تبديل|استبدال|اعادة"),
         ("order_status", r"\b(order|track|tracking|delivery status|where is|shipment|parcel)\b|طلب|طلبي|شحنة|شحن|تتبع|وصل|وين"),

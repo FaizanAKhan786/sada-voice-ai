@@ -46,6 +46,12 @@ The order lookup and handoff screens use invented data, so the demo works withou
 
 Python, FastAPI, WebSockets, JavaScript, AudioWorklet, faster-whisper, WebRTC VAD, Ollama and optional LangGraph. The default setup needs only the Python web dependencies; speech and LLM models are opt-in.
 
+## Hosted conversational AI (optional)
+
+SADA can use a hosted Groq model to generate conversational English/Arabic responses for demo policies, greetings and general support questions. **A server-side Groq API key is required**. Order facts and handoffs stay deterministic, and scripted responses remain available if the provider fails. In the live demo, the agent defaults to scripted mode until you set `GROQ_API_KEY` in Render.
+
+See [hosted AI setup](docs/hosted-ai.md). The browser never receives the key. Do not send real customer or payment data to this demo.
+
 ## Public demo deployment (Render)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/FaizanAKhan786/sada-voice-ai)

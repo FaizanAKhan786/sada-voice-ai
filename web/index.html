@@ -24,7 +24,7 @@
       <div class="side-spacer"></div>
       <div class="sidebar-bottom">
         <div class="side-avatar">AI</div>
-        <div class="side-profile"><strong>Portfolio environment</strong><small>Local deployment</small></div>
+        <div class="side-profile"><strong>Portfolio environment</strong><small>Public synthetic demo</small></div>
         <span class="sidebar-chevron">⌄</span>
       </div>
     </aside>
@@ -61,10 +61,10 @@
             <section class="voice-panel"><div class="panel-top"><span class="panel-kicker">VOICE INTERFACE</span><span class="panel-ellipsis">•••</span></div><div class="orb-wrapper"><div class="orb-glow"></div><div class="orb" id="voiceOrb"><span>✳</span></div><span class="orb-particle p1"></span><span class="orb-particle p2"></span><span class="orb-particle p3"></span></div><h2 id="voiceHeadline">Ready to listen</h2><p id="voiceDescription">Select the microphone to start a voice conversation.</p><div class="waveform" id="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="voice-panel-footer"><div><span class="panel-muted">INPUT</span><select id="inputModeSelect" aria-label="Speech input mode"><option value="browser">Browser speech</option><option value="local">Local Whisper · push to talk</option><option value="stream">Live streaming · local VAD</option></select></div><div><span class="panel-muted">OUTPUT</span><strong id="voiceOutputMode">Speech synthesis</strong></div></div></section>
 
             <section class="orders-panel" id="sample-orders"><div class="panel-section-head"><div><h3>Test orders</h3><p>Try these synthetic records</p></div><span class="tiny-demo">SAMPLE</span></div><div id="ordersList" class="orders-list"><span class="loading-text">Loading demo data…</span></div></section>
-            <section class="info-panel"><div class="info-icon">ⓘ</div><div><strong>Portfolio demonstration</strong><p>This is not connected to a real store, customer database, payment system, or live support team. Browser speech recognition may use a browser vendor's service. Live streaming uses local speech processing and is an experimental demo.</p></div></section>
+            <section class="info-panel"><div class="info-icon">ⓘ</div><div><strong>Portfolio demonstration</strong><p>This is not connected to a real store, customer database, payment system, or live support team. <span id="modelStatus">Checking AI configuration…</span>. When hosted AI is enabled, conversation messages are sent to Groq for processing. Do not enter real personal, payment or account data. Browser speech recognition may use a browser vendor's service. Experimental local streaming is disabled on public free hosting.</p></div></section>
           </aside>
         </div>
-        <footer class="footer"><span>© SADA Voice AI • Built with FastAPI + WebSockets</span><span>English / العربية <span class="footer-dot">·</span> Demo environment</span></footer>
+        <footer class="footer"><span>© SADA Voice AI • FastAPI + WebSockets + optional Groq AI</span><span>English / العربية <span class="footer-dot">·</span> Demo environment</span></footer>
       </section>
     </main>
   </div>
