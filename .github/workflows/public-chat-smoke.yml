@@ -1,0 +1,18 @@
+name: Public hosted AI smoke check
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  public-groq:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install WebSocket test client
+        run: python -m pip install 'websockets>=14,<17'
+      - name: Check deployed chat through public WebSocket
+        run: python scripts/smoke_public.py

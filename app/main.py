@@ -47,7 +47,7 @@ def health():
 
 @app.get("/api/config")
 def config():
-    return {"stt_enabled": STT_ENABLED, "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "hosted_llm_enabled": hosted_enabled(), "model_provider": "Groq" if hosted_enabled() else None, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
+    return {"stt_enabled": STT_ENABLED, "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "hosted_llm_enabled": hosted_enabled(), "model_provider": "Groq" if hosted_enabled() else None, "hosted_model": os.getenv("GROQ_MODEL", "openai/gpt-oss-120b") if hosted_enabled() else None, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
 
 
 @app.get("/api/demo-orders")
