@@ -175,7 +175,26 @@ async def speak_cloud(
                 json=payload,
             )
         if response.status_code != 200:
-            raise RuntimeError(f"Speech output returned HTTP {response.status_code}")
+            # Never log source text, credentials, or the full provider error body.
+            details = {}
+            try:
+                details = response.json().get("error", {})
+            except (ValueError, AttributeError):
+                pass
+            if not isinstance(details, dict):
+                details = {}
+            code = str(details.get("code") or "")[:45]
+            kind = str(details.get("type") or "")[:45]
+            param = str(details.get("param") or "")[:45]
+            description = str(details.get("message") or "").lower()
+            keywords = ("permission", "billing", "rate limit", "unsupported", "voice",
+                        "model", "character", "input", "length", "validation", "quota")
+            category = ",".join(k for k in keywords if k in description)
+            raise RuntimeError(
+                f"Speech output HTTP {response.status_code}, code={code!r}, "
+                f"type={kind!r}, param={param!r}, category={category!r}, "
+                f"chars={len(text)}, language={language}"
+            )
         sound = response.content
         if not sound.startswith(b"RIFF") or sound[8:12] != b"WAVE" or len(sound) > MAX_WAV_BYTES:
             raise RuntimeError("Speech service returned invalid audio")
