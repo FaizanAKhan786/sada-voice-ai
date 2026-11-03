@@ -58,6 +58,13 @@ See [hosted AI setup](docs/hosted-ai.md). The browser never receives the key. Do
 
 The included [`render.yaml`](render.yaml) deploys the FastAPI app, web dashboard, and synthetic support workflows to a public HTTPS endpoint. **This is a lightweight demonstration:** browser speech features work where supported, while server-side Whisper/VAD and local Ollama inference are disabled. Render must be connected and approved in the repository owner's account before a public URL exists. See [public deployment notes](docs/public-deployment.md) for safeguards and limitations.
 
+
+## Hosted Arabic-English voice conversations
+
+SADA supports **utterance-based hosted speech recognition** (Groq Whisper), GPT-OSS conversational responses, and **interruptible English/Arabic hosted speech** (Groq Orpheus). Select **Live AI voice · English / العربية** in the public dashboard, allow microphone access, and speak. WebRTC VAD detects pauses; users can interrupt speech by talking again. The backend cancels in-progress work and the browser stops audio playback. This is a turn-based, near-real-time prototype, not full-duplex streaming ASR. Audio is briefly sent to Groq, not stored by SADA. Never speak personal or payment information during this demo.
+
+See [voice architecture, rate limits and setup](docs/voice-ai.md). The project also includes a synthetic real-provider [voice smoke test](scripts/smoke_voice_public.py).
+
 ## Quick start (text and browser-based voice)
 
 ```bash

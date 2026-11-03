@@ -22,5 +22,9 @@ services:
         value: "1"
       - key: GROQ_MODEL
         value: openai/gpt-oss-120b
+      - key: ENABLE_CLOUD_VOICE
+        value: "1"
+      - key: ENABLE_HOSTED_TTS
+        value: "1"
       - key: USE_LANGGRAPH
         value: "0"

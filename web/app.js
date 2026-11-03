@@ -16,6 +16,9 @@ let recordStream = null, activeRecognition = null, toastTimeout = null, reconnec
 let synthOn = true, config = {stt_enabled: false};
 let audioContext = null, audioNode = null, audioSource = null, silentSink = null;
 let streamingMessage = null, speechBuffer = '', streamSpeechStarted = false;
+let playbackContext = null, currentSource = null, audioTail = Promise.resolve();
+let playbackEpoch = 0, latestVoiceTurn = null;
+
 
 const transcript = [];
 const BrowserRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -98,6 +101,7 @@ function connect() {
   socket.addEventListener('open', () => {
     updateConnection(true);
     socket.send(JSON.stringify({type:'set_language', language:els.languageSelect.value}));
+    socket.send(JSON.stringify({type:'set_voice_output', enabled:synthOn}));
   });
   socket.addEventListener('message', event => {
     let payload;
@@ -105,6 +109,7 @@ function connect() {
     if (payload.type === 'answer_start') {
       // A local Ollama answer can be read aloud sentence-by-sentence.
       if (streamingMessage) streamingMessage = null;
+      latestVoiceTurn = payload.turn_id;
       streamingMessage = {turn_id: payload.turn_id, ...addMessage('assistant', '', {language:payload.language}), text:''};
       speechBuffer = ''; streamSpeechStarted = false;
       status('processing');
@@ -115,8 +120,10 @@ function connect() {
       streamingMessage.item.text = streamingMessage.text;
       els.messages.scrollTop = els.messages.scrollHeight;
       speechBuffer += payload.delta;
-      streamSpeechChunks(false, els.languageSelect.value === 'ar' ? 'ar' : detectArabic(streamingMessage.text) ? 'ar' : 'en');
+      if (listenMode !== 'cloud')
+        streamSpeechChunks(false, els.languageSelect.value === 'ar' ? 'ar' : detectArabic(streamingMessage.text) ? 'ar' : 'en');
     } else if (payload.type === 'answer') {
+      latestVoiceTurn = payload.turn_id;
       busy = false; els.sendBtn.disabled = false;
       const wasStreamed = streamingMessage && streamingMessage.turn_id === payload.turn_id;
       if (wasStreamed) {
@@ -127,21 +134,29 @@ function connect() {
         streamingMessage.label.textContent = (payload.intent || 'ASSISTANT').toUpperCase().replaceAll('_', ' ');
         if (!['local_ollama_unverified', 'hosted_groq_unverified'].includes(payload.source)) {
           // A failed model stream must replace partially spoken content.
-          cancelSpeech(); speak(payload.text, payload.language);
+          if (listenMode !== 'cloud') { cancelSpeech(); speak(payload.text, payload.language); }
           speechBuffer = '';
-        } else streamSpeechChunks(true, payload.language);
+        } else if (listenMode !== 'cloud') streamSpeechChunks(true, payload.language);
         streamingMessage = null;
       } else {
         addMessage('assistant', payload.text, {intent:payload.intent, language:payload.language, latency_ms:payload.latency_ms, case_id:payload.case_id});
-        speak(payload.text, payload.language);
+        if (listenMode !== 'cloud') speak(payload.text, payload.language);
       }
       refreshStats();
       if (payload.handoff) notification('Simulated handoff created. No real support team is connected.');
-      if (!synthOn || !('speechSynthesis' in window)) status('ready');
+      if (!synthOn || (listenMode !== 'cloud' && !('speechSynthesis' in window))) status('ready');
     } else if (payload.type === 'transcript') {
       busy = true; els.sendBtn.disabled = true;
-      addMessage('user', payload.text, {language: payload.language, mode:'local_streaming_stt'});
+      addMessage('user', payload.text, {language: payload.language, mode:listenMode === 'cloud' ? 'hosted_stt' : 'local_streaming_stt'});
       status('processing');
+    } else if (payload.type === 'voice_audio') {
+      if (listenMode === 'cloud' && synthOn && latestVoiceTurn === payload.turn_id)
+        enqueueHostedSpeech(payload.audio_base64);
+    } else if (payload.type === 'voice_fallback') {
+      if (listenMode === 'cloud' && synthOn && latestVoiceTurn === payload.turn_id) {
+        notification('Hosted voice temporarily unavailable. Using browser speech.');
+        speak(payload.text, payload.language);
+      }
     } else if (payload.type === 'speech_started') {
       cancelSpeech(); streamingMessage = null; speechBuffer = '';
       busy = false; els.sendBtn.disabled = false; status('listening');
@@ -160,7 +175,7 @@ function connect() {
     }
   });
   socket.addEventListener('close', () => {
-    if (listenMode === 'stream') void stopStreaming({flush:false});
+    if (listenMode === 'stream' || listenMode === 'cloud') void stopStreaming({flush:false});
     updateConnection(false); busy = false; status('ready');
     reconnectTimeout = window.setTimeout(connect, 2500);
   });
@@ -181,8 +196,44 @@ function sendMessage(text = els.chatInput.value) {
 function detectArabic(text) { return /[\u0600-\u06FF]/.test(text); }
 
 function cancelSpeech() {
+  playbackEpoch++;
+  try { currentSource?.stop(); } catch { /* Already stopped. */ }
+  currentSource = null;
+  audioTail = Promise.resolve();
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   speaking = false; streamSpeechStarted = false; speechBuffer = '';
+}
+
+function enqueueHostedSpeech(base64wav) {
+  const epoch = playbackEpoch;
+  audioTail = audioTail.then(async () => {
+    if (epoch !== playbackEpoch || listenMode !== 'cloud') return;
+    try {
+      if (!playbackContext) playbackContext = new AudioContext();
+      const binary = atob(base64wav);
+      const bytes = new Uint8Array(binary.length);
+      for (let i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const audio = await playbackContext.decodeAudioData(bytes.buffer);
+      if (epoch !== playbackEpoch || listenMode !== 'cloud') return;
+      await playbackContext.resume();
+      if (epoch !== playbackEpoch || listenMode !== 'cloud') return;
+      await new Promise(resolve => {
+        const source = playbackContext.createBufferSource(); currentSource = source;
+        source.buffer = audio;
+        source.connect(playbackContext.destination);
+        source.onended = () => {
+          if (currentSource === source) {
+            currentSource = null;
+            if (epoch === playbackEpoch && listenMode === 'cloud') status('listening');
+          }
+          resolve();
+        };
+        status('speaking'); source.start();
+      });
+    } catch (error) {
+      if (epoch === playbackEpoch) notification('Unable to play hosted voice audio.');
+    }
+  });
 }
 
 function streamSpeechChunks(force, language) {
@@ -214,20 +265,25 @@ function speak(text, language) {
 }
 
 async function stopStreaming({flush=true} = {}) {
+  cancelSpeech();
   listenMode = null;
   try { audioNode?.port.close(); audioNode?.disconnect(); audioSource?.disconnect(); silentSink?.disconnect(); } catch { /* Audio context closed. */ }
   if (audioContext) await audioContext.close().catch(() => {});
+  if (playbackContext) await playbackContext.close().catch(() => {});
+  playbackContext = null;
   recordStream?.getTracks().forEach(track => track.stop());
   audioNode = audioSource = silentSink = audioContext = recordStream = null;
   if (flush && connected) socket.send(JSON.stringify({type:'flush'}));
   status('ready');
 }
 
-async function startStreaming() {
-  if (!config.stt_enabled || !connected) { notification('Enable local streaming STT on the server first.'); return; }
+async function startStreaming(mode = 'stream') {
+  const available = mode === 'cloud' ? config.cloud_voice_enabled : config.stt_enabled;
+  if (!available || !connected) { notification('This speech mode is not available on the server.'); return; }
   try {
     recordStream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:false});
     audioContext = new AudioContext();
+    if (mode === 'cloud') { playbackContext = new AudioContext(); await playbackContext.resume(); }
     await audioContext.audioWorklet.addModule('/static/pcm-worklet.js');
     audioSource = audioContext.createMediaStreamSource(recordStream);
     audioNode = new AudioWorkletNode(audioContext, 'pcm-streamer');
@@ -237,8 +293,8 @@ async function startStreaming() {
       if (socket?.readyState === WebSocket.OPEN && socket.bufferedAmount < 512000)
         socket.send(event.data); // ArrayBuffer, 16k mono PCM16 20ms.
     };
-    listenMode = 'stream'; status('listening');
-    notification('Local live streaming enabled. Speak naturally. Use headphones to avoid playback echo.');
+    listenMode = mode; status('listening');
+    notification(mode === 'cloud' ? 'Hosted AI voice is active. Speak English or Arabic. Headphones recommended.' : 'Local live audio enabled. Headphones recommended.');
   } catch (error) {
     await stopStreaming({flush:false});
     notification(`Live microphone unavailable: ${error.message}`);
@@ -246,7 +302,7 @@ async function startStreaming() {
 }
 
 function stopListening() {
-  if (listenMode === 'stream') { void stopStreaming(); return; }
+  if (listenMode === 'stream' || listenMode === 'cloud') { void stopStreaming(); return; }
   if (listenMode === 'recognition' && activeRecognition) activeRecognition.stop();
   if (listenMode === 'recording' && recorder && recorder.state !== 'inactive') recorder.stop();
   listenMode = null; status('ready');
@@ -308,7 +364,8 @@ function startRecognition() {
 function toggleMic() {
   if (listenMode) { stopListening(); return; }
   if (busy) { notification('Complete the current response first.'); return; }
-  if (els.inputModeSelect.value === 'stream') { startStreaming(); return; }
+  if (els.inputModeSelect.value === 'cloud') { void startStreaming('cloud'); return; }
+  if (els.inputModeSelect.value === 'stream') { void startStreaming('stream'); return; }
   if (els.inputModeSelect.value === 'local' && config.stt_enabled) startRecording();
   else if (BrowserRecognition) startRecognition();
   else if (config.stt_enabled) startRecording();
@@ -353,7 +410,10 @@ async function initData() {
     els.inputModeSelect.querySelector('[value="local"]').disabled = !config.stt_enabled;
     els.inputModeSelect.querySelector('[value="stream"]').disabled = !config.stt_enabled || !window.AudioWorkletNode;
     if (!BrowserRecognition && config.stt_enabled) els.inputModeSelect.value = 'local';
-    if (!BrowserRecognition && !config.stt_enabled) els.inputModeSelect.disabled = true;
+    els.inputModeSelect.querySelector('[value="cloud"]').disabled = !config.cloud_voice_enabled || !window.AudioWorkletNode;
+  if (config.cloud_voice_enabled && window.AudioWorkletNode) els.inputModeSelect.value = 'cloud';
+  else if (!BrowserRecognition && !config.stt_enabled) els.inputModeSelect.disabled = true;
+  els.voiceOutputMode.textContent = config.cloud_tts_enabled ? 'Hosted English / العربية' : 'Browser speech';
   } catch { els.ordersList.textContent = 'Sample records unavailable.'; }
   refreshStats();
 }
@@ -374,6 +434,7 @@ els.languageSelect.addEventListener('change', () => {
 els.soundBtn.addEventListener('click', () => {
   synthOn = !synthOn; els.soundBtn.classList.toggle('on', synthOn);
   els.soundBtn.title = synthOn ? 'Mute spoken replies' : 'Enable spoken replies';
+  if (connected) socket.send(JSON.stringify({type:'set_voice_output', enabled:synthOn}));
   if (!synthOn) { cancelSpeech(); status('ready'); }
   notification(synthOn ? 'Spoken replies enabled.' : 'Spoken replies muted.');
 });

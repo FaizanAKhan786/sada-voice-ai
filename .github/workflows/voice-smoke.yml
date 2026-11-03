@@ -1,0 +1,22 @@
+name: Hosted voice smoke test
+on:
+  push:
+    branches: [main]
+    paths:
+      - app/voice_cloud.py
+      - app/live.py
+      - scripts/smoke_voice_public.py
+      - .github/workflows/voice-smoke.yml
+  workflow_dispatch:
+jobs:
+  hosted-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install 'websockets>=14,<17'
+      - name: Verify one real synthetic voice turn via public SADA
+        run: python scripts/smoke_voice_public.py

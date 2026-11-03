@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.engine import ORDERS, Session, route_message
 from app.public_demo import TurnLimiter, origin_allowed, public_demo_enabled
+from app.voice_cloud import cloud_voice_enabled, hosted_tts_enabled
 from app.hosted import GENERATIVE_INTENTS, HOSTED_QUOTA, hosted_enabled, answer_hosted
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -47,7 +48,7 @@ def health():
 
 @app.get("/api/config")
 def config():
-    return {"stt_enabled": STT_ENABLED, "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "hosted_llm_enabled": hosted_enabled(), "model_provider": "Groq" if hosted_enabled() else None, "hosted_model": os.getenv("GROQ_MODEL", "openai/gpt-oss-120b") if hosted_enabled() else None, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
+    return {"stt_enabled": STT_ENABLED, "cloud_voice_enabled": cloud_voice_enabled(), "cloud_tts_enabled": hosted_tts_enabled(), "graph_enabled": USE_GRAPH, "ollama_enabled": OLLAMA_ENABLED, "hosted_llm_enabled": hosted_enabled(), "model_provider": "Groq" if hosted_enabled() else None, "hosted_model": os.getenv("GROQ_MODEL", "openai/gpt-oss-120b") if hosted_enabled() else None, "mode": "synthetic_demo", "streaming_enabled": STT_ENABLED, "stream_protocol": "pcm_s16le_16000", "llm_model": os.getenv("OLLAMA_MODEL", "qwen3:4b") if OLLAMA_ENABLED else None}
 
 
 @app.get("/api/demo-orders")
