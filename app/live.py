@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import logging
 import os
 import time
 from contextlib import suppress
@@ -20,6 +21,8 @@ from app.hosted import GENERATIVE_INTENTS, HOSTED_QUOTA, hosted_enabled, stream_
 from app.public_demo import TurnLimiter, public_demo_enabled
 from app.voice_cloud import cloud_voice_enabled, hosted_tts_enabled, transcribe_cloud, speak_cloud, voice_segments
 from app.streaming import AudioSegmenter
+
+VOICE_LOGGER = logging.getLogger("sada.voice")
 
 
 async def handle_live(socket: WebSocket, *, stt_enabled: bool, ollama_enabled: bool,
@@ -127,7 +130,10 @@ async def handle_live(socket: WebSocket, *, stt_enabled: bool, ollama_enabled: b
                     await send({"type": "voice_done", "turn_id": turn_id})
                 except asyncio.CancelledError:
                     raise
-                except Exception:
+                except Exception as exc:
+                    # Log only controlled failure types/status, never provider response bodies, text or keys.
+                    safe = str(exc) if isinstance(exc, RuntimeError) else type(exc).__name__
+                    VOICE_LOGGER.warning("Hosted speech fallback: %s", safe[:90])
                     await send({"type": "voice_fallback", "turn_id": turn_id,
                                 "text": answer["text"], "language": answer["language"]})
         except asyncio.CancelledError:

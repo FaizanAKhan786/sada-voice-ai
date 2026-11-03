@@ -175,7 +175,7 @@ async def speak_cloud(
                 json=payload,
             )
         if response.status_code != 200:
-            raise RuntimeError("Speech output service unavailable")
+            raise RuntimeError(f"Speech output returned HTTP {response.status_code}")
         sound = response.content
         if not sound.startswith(b"RIFF") or sound[8:12] != b"WAVE" or len(sound) > MAX_WAV_BYTES:
             raise RuntimeError("Speech service returned invalid audio")
