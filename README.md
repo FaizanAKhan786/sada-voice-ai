@@ -236,3 +236,7 @@ Do not claim the optional ASR/LLM operated successfully on real audio/model hard
 - [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
 - [WebRTC VAD](https://github.com/wiseman/py-webrtcvad)
 - [Ollama streaming chat API](https://docs.ollama.com/api)
+
+### One-time Orpheus model approval
+
+Hosted English and Arabic TTS requires accepting [English](https://console.groq.com/playground?model=canopylabs/orpheus-v1-english) and [Arabic](https://console.groq.com/playground?model=canopylabs/orpheus-arabic-saudi) model terms in Groq Console. Otherwise, hosted transcription and chat work with browser speech fallback. See [voice setup](docs/voice-ai.md).

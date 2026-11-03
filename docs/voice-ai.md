@@ -40,3 +40,12 @@ The browser offers **Live AI voice · English / العربية** when `/api/conf
 
 - [Groq STT](https://console.groq.com/docs/speech-to-text)
 - [Groq TTS](https://console.groq.com/docs/text-to-speech/orpheus)
+
+## One-time Groq Orpheus model approval
+
+Groq requires an owner of the API-key organization to **accept the terms for both Orpheus models** before hosted TTS can generate WAV audio. Without approval, Groq returns HTTP 400 `model_terms_required`. Whisper speech recognition and hosted chat still work, and SADA emits a `voice_fallback` event for supported browsers to speak the answer.
+
+- [Accept English Orpheus terms](https://console.groq.com/playground?model=canopylabs/orpheus-v1-english)
+- [Accept Arabic Orpheus terms](https://console.groq.com/playground?model=canopylabs/orpheus-arabic-saudi)
+
+The automated smoke test verifies hosted transcription, an AI response, and either Groq WAV output or the browser fallback event. Once the terms are accepted, manually run the GitHub **Hosted voice smoke test** workflow with `require_hosted_tts` selected to confirm genuine hosted audio. Never claim hosted TTS is verified before that strict test passes.

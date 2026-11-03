@@ -413,7 +413,7 @@ async function initData() {
     els.inputModeSelect.querySelector('[value="cloud"]').disabled = !config.cloud_voice_enabled || !window.AudioWorkletNode;
   if (config.cloud_voice_enabled && window.AudioWorkletNode) els.inputModeSelect.value = 'cloud';
   else if (!BrowserRecognition && !config.stt_enabled) els.inputModeSelect.disabled = true;
-  els.voiceOutputMode.textContent = config.cloud_tts_enabled ? 'Hosted English / العربية' : 'Browser speech';
+  els.voiceOutputMode.textContent = config.cloud_tts_enabled ? 'Groq voice · browser fallback' : 'Browser speech';
   } catch { els.ordersList.textContent = 'Sample records unavailable.'; }
   refreshStats();
 }
