@@ -16,6 +16,12 @@ SADA is my attempt to put those pieces together in a small app that runs locally
 
 This is a **portfolio prototype**, not a deployed call-center product. Order lookup, policies and handoffs are simulated. There are no live store, payment, CRM or human-agent integrations.
 
+## SaaS-style dashboard
+
+The public SADA Studio interface now includes an interactive customer-support playground, a responsive workspace sidebar, a prominent voice-session launcher, server-wide demo counters, sample-order shortcuts, and clear hosted voice status. The browser UI uses no third-party dashboard framework and continues to work with the existing FastAPI/WebSocket backend. The environment is a **public synthetic-data demo**, not a multi-tenant SaaS product with real user accounts, subscriptions, or production CRM integration.
+
+Try the [live SADA Studio](https://sada-voice-ai.onrender.com) in Chrome or Edge. On phones, use the menu button to navigate between the playground, sample orders and activity. To explore the interface without a microphone, send the sample order prompt `Where is ORD-1001?`.
+
 ## Demo
 
 The dashboard supports text chat, browser speech input/output and optional local streaming audio. Try these examples after starting the server:
@@ -57,13 +63,6 @@ See [hosted AI setup](docs/hosted-ai.md). The browser never receives the key. Do
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/FaizanAKhan786/sada-voice-ai)
 
 The included [`render.yaml`](render.yaml) deploys the FastAPI app, web dashboard, and synthetic support workflows to a public HTTPS endpoint. **This is a lightweight demonstration:** browser speech features work where supported, while server-side Whisper/VAD and local Ollama inference are disabled. Render must be connected and approved in the repository owner's account before a public URL exists. See [public deployment notes](docs/public-deployment.md) for safeguards and limitations.
-
-
-## Hosted Arabic-English voice conversations
-
-SADA supports **utterance-based hosted speech recognition** (Groq Whisper), GPT-OSS conversational responses, and **interruptible English/Arabic hosted speech** (Groq Orpheus). Select **Live AI voice · English / العربية** in the public dashboard, allow microphone access, and speak. WebRTC VAD detects pauses; users can interrupt speech by talking again. The backend cancels in-progress work and the browser stops audio playback. This is a turn-based, near-real-time prototype, not full-duplex streaming ASR. Audio is briefly sent to Groq, not stored by SADA. Never speak personal or payment information during this demo.
-
-See [voice architecture, rate limits and setup](docs/voice-ai.md). The project also includes a synthetic real-provider [voice smoke test](scripts/smoke_voice_public.py).
 
 ## Quick start (text and browser-based voice)
 
@@ -236,7 +235,3 @@ Do not claim the optional ASR/LLM operated successfully on real audio/model hard
 - [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
 - [WebRTC VAD](https://github.com/wiseman/py-webrtcvad)
 - [Ollama streaming chat API](https://docs.ollama.com/api)
-
-### One-time Orpheus model approval
-
-Hosted English and Arabic TTS requires accepting [English](https://console.groq.com/playground?model=canopylabs/orpheus-v1-english) and [Arabic](https://console.groq.com/playground?model=canopylabs/orpheus-arabic-saudi) model terms in Groq Console. Otherwise, hosted transcription and chat work with browser speech fallback. See [voice setup](docs/voice-ai.md).

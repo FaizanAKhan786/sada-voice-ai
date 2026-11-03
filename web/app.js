@@ -54,6 +54,13 @@ function status(kind) {
   }
   els.micBtn.classList.toggle('recording', kind === 'listening');
   els.micBtn.setAttribute('aria-label', kind === 'listening' ? 'Stop speaking' : 'Start speaking');
+  const voiceButton = document.getElementById('voicePanelBtn');
+  const voiceLabel = document.getElementById('voicePanelBtnText');
+  if (voiceButton && voiceLabel) {
+    const listening = Boolean(listenMode);
+    voiceLabel.textContent = listening ? 'Stop voice session' : 'Start voice session';
+    voiceButton.setAttribute('aria-pressed', listening ? 'true' : 'false');
+  }
 }
 
 function appendTextWithEmphasis(node, text) {
@@ -413,7 +420,9 @@ async function initData() {
     els.inputModeSelect.querySelector('[value="cloud"]').disabled = !config.cloud_voice_enabled || !window.AudioWorkletNode;
   if (config.cloud_voice_enabled && window.AudioWorkletNode) els.inputModeSelect.value = 'cloud';
   else if (!BrowserRecognition && !config.stt_enabled) els.inputModeSelect.disabled = true;
-  els.voiceOutputMode.textContent = config.cloud_tts_enabled ? 'Groq voice · browser fallback' : 'Browser speech';
+  els.voiceOutputMode.textContent = config.cloud_tts_enabled ? 'Hosted English / العربية' : 'Browser speech';
+  const voiceCapability = document.getElementById('voiceCapability');
+  if (voiceCapability) voiceCapability.textContent = config.cloud_voice_enabled ? 'Hosted AI' : config.stt_enabled ? 'Local STT' : 'Browser';
   } catch { els.ordersList.textContent = 'Sample records unavailable.'; }
   refreshStats();
 }
@@ -432,7 +441,7 @@ els.languageSelect.addEventListener('change', () => {
   notification(els.languageSelect.value === 'auto' ? 'Language auto-detection enabled for typed messages.' : 'Conversation language changed.');
 });
 els.soundBtn.addEventListener('click', () => {
-  synthOn = !synthOn; els.soundBtn.classList.toggle('on', synthOn);
+  synthOn = !synthOn; els.soundBtn.classList.toggle('on', synthOn); els.soundBtn.setAttribute('aria-pressed', String(synthOn));
   els.soundBtn.title = synthOn ? 'Mute spoken replies' : 'Enable spoken replies';
   if (connected) socket.send(JSON.stringify({type:'set_voice_output', enabled:synthOn}));
   if (!synthOn) { cancelSpeech(); status('ready'); }
@@ -463,3 +472,48 @@ window.addEventListener('beforeunload', () => { if (reconnectTimeout) clearTimeo
 
 connect();
 initData();
+
+
+
+// SaaS workspace actions. These decorate the existing working voice/chat engine;
+// no new service calls, browser secrets, or persistent user data are introduced.
+const quickVoiceBtn = document.getElementById('quickVoiceBtn');
+const voicePanelBtn = document.getElementById('voicePanelBtn');
+function startVoiceFromWorkspace() {
+  document.getElementById('voice-agent')?.scrollIntoView({behavior:'smooth', block:'center'});
+  if (!connected) { notification('Waiting for the voice agent to connect.'); return; }
+  if (config.cloud_voice_enabled && window.AudioWorkletNode) els.inputModeSelect.value = 'cloud';
+  toggleMic();
+}
+quickVoiceBtn?.addEventListener('click', startVoiceFromWorkspace);
+voicePanelBtn?.addEventListener('click', startVoiceFromWorkspace);
+
+document.getElementById('copyLinkBtn')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.origin + '/');
+    notification('Public demo link copied.');
+  } catch { notification('Could not copy the link. Please copy it from your address bar.'); }
+});
+
+const sidebar = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+function setMobileNav(open) {
+  sidebar?.classList.toggle('open', open);
+  sidebarBackdrop?.classList.toggle('visible', open);
+  mobileMenuBtn?.setAttribute('aria-expanded', String(open));
+  document.body.classList.toggle('nav-open', open);
+}
+mobileMenuBtn?.addEventListener('click', () => setMobileNav(!sidebar?.classList.contains('open')));
+sidebarBackdrop?.addEventListener('click', () => setMobileNav(false));
+window.addEventListener('keydown', e => { if (e.key === 'Escape') setMobileNav(false); });
+document.querySelectorAll('.nav-link[href^="#"]').forEach(link => link.addEventListener('click', () => {
+  document.querySelectorAll('.nav-link[href^="#"]').forEach(nav => {
+    const active = nav === link;
+    nav.classList.toggle('selected', active);
+    if (active) nav.setAttribute('aria-current', 'page');
+    else nav.removeAttribute('aria-current');
+  });
+  setMobileNav(false);
+}));
+window.addEventListener('resize', () => { if (window.innerWidth > 1050) setMobileNav(false); });

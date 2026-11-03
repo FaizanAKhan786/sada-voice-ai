@@ -3,69 +3,146 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111827">
-  <meta name="description" content="SADA is a bilingual customer support voice agent portfolio demo, backed by synthetic data.">
-  <title>SADA • AI Voice Support</title>
+  <meta name="theme-color" content="#0e1428">
+  <meta name="description" content="SADA Studio is an Arabic-English AI customer support voice assistant. Try real-time voice, chat, and demo order support.">
+  <title>SADA Studio | AI Customer Experience</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-mark"><span class="brand-spark">✦</span></div><div><strong>SADA<span class="brand-period">.</span></strong><span>AI VOICE STUDIO</span></div></div>
-      <div class="sidebar-label">WORKSPACE</div>
-      <nav class="nav" aria-label="Workspace navigation">
-        <a class="nav-link selected" href="#console" aria-current="page"><span class="nav-icon">◫</span> Agent console <span class="nav-dot"></span></a>
-        <a class="nav-link" href="#sample-orders"><span class="nav-icon">▤</span> Sample orders</a>
-        <a class="nav-link" href="#activity"><span class="nav-icon">◷</span> Session activity</a>
-      </nav>
-      <div class="sidebar-label second-label">ENVIRONMENT</div>
-      <div class="env-card"><span class="env-dot"></span><div><strong>Demo sandbox</strong><small>Synthetic data only</small></div></div>
-      <div class="side-spacer"></div>
-      <div class="sidebar-bottom">
-        <div class="side-avatar">AI</div>
-        <div class="side-profile"><strong>Portfolio environment</strong><small>Public synthetic demo</small></div>
-        <span class="sidebar-chevron">⌄</span>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.1 7.9L22 12l-7.9 2.1L12 22l-2.1-7.9L2 12l7.9-2.1L12 2Z"/></symbol>
+    <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="3" y="13" width="5" height="8" rx="2"/><rect x="16" y="13" width="5" height="8" rx="2"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="M3 7v10l9 5 9-5V7M12 12v10"/><path d="m7.5 4.5 9 5"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3 8 8 11 5-3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 .4l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7-.4l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="Close navigation" tabindex="-1"></button>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview" aria-label="SADA Studio home">
+        <span class="brand-logo"><svg class="icon"><use href="#i-spark"/></svg></span>
+        <span class="brand-type"><strong>sada<span>.</span></strong><small>VOICE INTELLIGENCE</small></span>
+        <span class="brand-studio">STUDIO</span>
+      </a>
+
+      <div class="workspace-switcher" aria-label="Current workspace">
+        <span class="workspace-icon">S</span>
+        <span class="workspace-name"><strong>SADA Workspace</strong><small>Public demo environment</small></span>
+        <svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg>
       </div>
+
+      <div class="nav-group-label">WORKSPACE</div>
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="nav-link selected" href="#overview" aria-current="page"><svg class="icon"><use href="#i-grid"/></svg><span>Overview</span></a>
+        <a class="nav-link" href="#playground"><svg class="icon"><use href="#i-spark"/></svg><span>AI Playground</span><span class="nav-live">LIVE</span></a>
+        <a class="nav-link" href="#sample-orders"><svg class="icon"><use href="#i-package"/></svg><span>Sample orders</span></a>
+        <a class="nav-link" href="#activity"><svg class="icon"><use href="#i-activity"/></svg><span>Usage activity</span></a>
+      </nav>
+
+      <div class="nav-group-label nav-group-secondary">RESOURCES</div>
+      <nav class="nav" aria-label="Project resources">
+        <a class="nav-link external-link" href="https://github.com/FaizanAKhan786/sada-voice-ai" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-external"/></svg><span>Source code</span></a>
+        <a class="nav-link external-link" href="https://github.com/FaizanAKhan786/sada-voice-ai/blob/main/docs/voice-ai.md" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-info"/></svg><span>Documentation</span></a>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-note"><span class="sidebar-note-icon"><svg class="icon"><use href="#i-shield"/></svg></span><strong>Sandbox environment</strong><p>Explore safely with synthetic customer data. No real orders or customer accounts.</p><span class="sidebar-note-foot"><span class="green-pulse"></span> Demo is active</span></div>
+      <div class="sidebar-profile"><span class="profile-avatar">S</span><span class="profile-text"><strong>SADA Studio</strong><small>Prototype workspace</small></span><span class="profile-verified">✳</span></div>
     </aside>
 
-    <main class="main" id="console">
+    <main class="main" id="overview">
       <header class="topbar">
-        <div class="breadcrumbs">Workspace <span>/</span> <strong>Agent console</strong></div>
-        <div class="top-actions"><span class="top-live"><span class="green-pulse"></span><span id="connectionTop">Connecting</span></span><span class="top-divider"></span><span class="demo-badge">DEMO BUILD v0.3</span></div>
+        <div class="topbar-left">
+          <button class="mobile-menu icon-button" id="mobileMenuBtn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button>
+          <span class="topbar-section">Workspace</span><span class="topbar-slash">/</span><strong>Overview</strong>
+        </div>
+        <div class="top-actions">
+          <div class="top-live"><span class="green-pulse"></span><span id="connectionTop">Connecting</span></div>
+          <button class="top-icon-button" id="copyLinkBtn" type="button" title="Copy website link" aria-label="Copy website link"><svg class="icon"><use href="#i-link"/></svg></button>
+          <a class="top-source" href="https://github.com/FaizanAKhan786/sada-voice-ai" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon"><use href="#i-external"/></svg></a>
+          <span class="top-avatar" title="SADA demo workspace">S</span>
+        </div>
       </header>
-      <section class="workspace">
-        <div class="page-title-row"><div><div class="eyebrow">CONVERSATIONAL AI / VOICE OPERATIONS</div><h1>Voice agent studio <span class="wave-emoji">✳</span></h1><p>Speak naturally in English or Arabic, and interrupt the assistant at any time.</p></div><button class="btn btn-ghost" id="resetBtn" type="button" title="Start a new session"><span>↻</span> New session</button></div>
 
-        <div class="metrics" id="activity">
-          <div class="metric-card"><div class="metric-head"><span>Conversation turns</span><span class="metric-icon purple">◎</span></div><div class="metric-num" id="metricTurns">0</div><div class="metric-foot"><span class="metric-foot-dot"></span> Current server run</div></div>
-          <div class="metric-card"><div class="metric-head"><span>Order lookups</span><span class="metric-icon blue">▤</span></div><div class="metric-num" id="metricOrders">0</div><div class="metric-foot">Synthetic records only</div></div>
-          <div class="metric-card"><div class="metric-head"><span>Demo handoffs</span><span class="metric-icon orange">↗</span></div><div class="metric-num" id="metricHandoffs">0</div><div class="metric-foot">No live agent connected</div></div>
+      <div class="workspace">
+        <section class="welcome" aria-labelledby="welcomeTitle">
+          <div class="welcome-copy">
+            <div class="welcome-eyebrow"><span class="eyebrow-dot"></span> YOUR AI SUPPORT WORKSPACE <span class="eyebrow-sep">/</span> PUBLIC DEMO</div>
+            <h1 id="welcomeTitle">Customer conversations,<br><em>beautifully handled.</em></h1>
+            <p>Meet SADA, your always-ready Arabic & English AI voice agent. Have a conversation, test a workflow, or explore the experience.</p>
+            <div class="welcome-actions">
+              <button class="primary-action" id="quickVoiceBtn" type="button"><svg class="icon"><use href="#i-mic"/></svg> Start voice conversation <svg class="icon arrow-icon"><use href="#i-arrow"/></svg></button>
+              <a class="secondary-action" href="#playground">Explore playground <svg class="icon"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-ring hero-ring-a"></div><div class="hero-ring hero-ring-b"></div>
+            <div class="hero-core"><svg class="icon"><use href="#i-spark"/></svg></div>
+            <div class="hero-mini hero-mini-a"><span class="hero-mini-dot"></span> Arabic + English</div>
+            <div class="hero-mini hero-mini-b"><span class="hero-mini-wave">▂▄▆▃▇▅▃</span> Voice enabled</div>
+            <span class="hero-star hero-star-a">✦</span><span class="hero-star hero-star-b">✧</span>
+          </div>
+        </section>
+
+        <div class="content-heading" id="activity"><div><span class="section-eyebrow">OVERVIEW</span><h2>Workspace pulse <span class="heading-muted">/ Server-wide demo counters</span></h2></div><span class="data-note"><span class="green-pulse"></span> Live session data</span></div>
+        <div class="metrics">
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Conversation turns</span><span class="metric-icon lavender"><svg class="icon"><use href="#i-activity"/></svg></span></div><div class="metric-num" id="metricTurns">0</div><div class="metric-foot"><span class="metric-trend">↗</span> Total demo interactions</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Order lookups</span><span class="metric-icon blue"><svg class="icon"><use href="#i-package"/></svg></span></div><div class="metric-num" id="metricOrders">0</div><div class="metric-foot">Synthetic order requests</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Handoff requests</span><span class="metric-icon peach"><svg class="icon"><use href="#i-headphones"/></svg></span></div><div class="metric-num" id="metricHandoffs">0</div><div class="metric-foot">Simulated agent escalations</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Voice capability</span><span class="metric-icon mint"><svg class="icon"><use href="#i-mic"/></svg></span></div><div class="metric-num metric-word" id="voiceCapability">Checking</div><div class="metric-foot">Current deployment configuration</div></div>
         </div>
 
-        <div class="workspace-grid">
+        <div class="content-heading studio-heading"><div><span class="section-eyebrow">AI PLAYGROUND</span><h2>Try your assistant <span class="heading-muted">/ Live conversation</span></h2></div><span class="studio-hint"><svg class="icon"><use href="#i-globe"/></svg> English & العربية</span></div>
+        <div class="workspace-grid" id="playground">
           <section class="chat-card" aria-label="Voice assistant conversation">
-            <div class="chat-header"><div class="bot-avatar"><span>✦</span></div><div class="chat-heading"><div class="agent-title">SADA Assistant <span class="ai-chip">AI AGENT</span></div><div class="agent-sub"><span class="green-pulse small"></span><span id="connectionStatus">Connecting to agent…</span><span class="sub-separator">·</span> Arabic & English</div></div><div class="chat-tools"><label class="sr-only" for="languageSelect">Conversation language</label><select id="languageSelect" aria-label="Conversation language"><option value="auto">Auto language</option><option value="en">English</option><option value="ar">العربية</option></select><button id="soundBtn" type="button" title="Toggle spoken replies" aria-label="Toggle spoken replies" class="small-icon-button on">♫</button><button id="exportBtn" type="button" title="Export transcript" aria-label="Export transcript" class="small-icon-button">⇩</button></div></div>
+            <div class="chat-header">
+              <span class="bot-avatar"><svg class="icon"><use href="#i-spark"/></svg></span>
+              <div class="chat-heading"><div class="agent-title">SADA Assistant <span class="ai-chip">AI AGENT</span></div><div class="agent-sub"><span class="green-pulse small"></span><span id="connectionStatus">Connecting to agent…</span><span class="sub-separator">•</span> Bilingual assistant</div></div>
+              <div class="chat-tools"><button type="button" id="resetBtn" class="small-icon-button reset-chat" title="Start a new session" aria-label="Start a new session"><svg class="icon"><use href="#i-reset"/></svg></button><label class="sr-only" for="languageSelect">Conversation language</label><select id="languageSelect" aria-label="Conversation language"><option value="auto">Auto language</option><option value="en">English</option><option value="ar">العربية</option></select><button type="button" id="soundBtn" class="small-icon-button on" title="Toggle spoken replies" aria-label="Toggle spoken replies" aria-pressed="true"><svg class="icon"><use href="#i-volume"/></svg></button><button type="button" id="exportBtn" class="small-icon-button" title="Export transcript" aria-label="Export transcript"><svg class="icon"><use href="#i-download"/></svg></button></div>
+            </div>
+            <div class="conversation-intro"><div><span class="intro-spark">✳</span><strong>You're connected to SADA</strong></div><p>Your space to explore smarter support. Ask anything about the example store, or start a voice conversation.</p></div>
             <div class="chat-body" id="messages" role="log" aria-live="polite" aria-relevant="additions">
-              <div class="day-stamp"><span>NEW CONVERSATION</span></div>
-              <div class="message-row bot"><div class="message-avatar">✦</div><div class="message-group"><div class="sender-name">SADA <span>•</span> Just now</div><div class="bubble bot-bubble">Hi there! 👋 I'm SADA, your bilingual AI support assistant.<br><br>I can check a demo order, explain our example return policy, or simulate a transfer to a human agent. What would you like to do?</div><span class="message-label">DEMO ASSISTANT</span></div></div>
+              <div class="day-stamp"><span>TODAY · NEW CONVERSATION</span></div>
+              <div class="message-row bot"><div class="message-avatar">✳</div><div class="message-group"><div class="sender-name">SADA <span>·</span> Your AI assistant</div><div class="bubble bot-bubble">Hi! 👋 I'm SADA, your English and Arabic support assistant. I can look up a demo order, explain sample return policies, or help with general questions. What can I help you with?</div><span class="message-label">WELCOME MESSAGE</span></div></div>
             </div>
             <div class="chat-bottom">
-              <div class="suggestions" aria-label="Suggested messages"><button type="button" data-prompt="Where is my order ORD-1001?">◉ Track an order</button><button type="button" data-prompt="What is the return policy?">⟲ Return policy</button><button type="button" data-prompt="Can I talk to a human agent?">♙ Human handoff</button></div>
-              <div class="composer"><textarea id="chatInput" rows="1" maxlength="1500" placeholder="Ask SADA anything about orders or support..." aria-label="Your message"></textarea><div class="composer-actions"><button type="button" id="micBtn" aria-label="Start speaking" title="Speak your message" class="mic-button"><span class="mic-glyph">🎙</span></button><button type="button" id="sendBtn" aria-label="Send message" class="send-button"><span>➤</span></button></div></div>
-              <div class="composer-footer"><span id="inputHelp"><span class="kbd">Enter</span> to send, <span class="kbd">Shift + Enter</span> for a new line</span><span class="voice-state" id="voiceState"><span class="voice-dot"></span> Voice ready</span></div>
+              <div class="suggestions" aria-label="Suggested messages"><button type="button" data-prompt="Where is my order ORD-1001?"><svg class="icon"><use href="#i-package"/></svg> Track an order</button><button type="button" data-prompt="Can you explain the return policy?"><svg class="icon"><use href="#i-reset"/></svg> Return policy</button><button type="button" data-prompt="Can I talk to a human agent?"><svg class="icon"><use href="#i-headphones"/></svg> Human handoff</button></div>
+              <div class="composer"><textarea id="chatInput" rows="1" maxlength="1500" placeholder="Message SADA in English or Arabic…" aria-label="Your message"></textarea><div class="composer-actions"><button id="micBtn" type="button" class="mic-button" aria-label="Start speaking" title="Speak your message"><svg class="icon"><use href="#i-mic"/></svg></button><button id="sendBtn" type="button" class="send-button" aria-label="Send message" title="Send message"><svg class="icon"><use href="#i-arrow"/></svg></button></div></div>
+              <div class="composer-footer"><span id="inputHelp"><span class="kbd">Enter</span> send <span class="hint-separator">·</span> <span class="kbd">Shift ↵</span> new line</span><span class="voice-state" id="voiceState"><span class="voice-dot"></span> Voice ready</span></div>
             </div>
           </section>
-
           <aside class="right-column">
-            <section class="voice-panel"><div class="panel-top"><span class="panel-kicker">VOICE INTERFACE</span><span class="panel-ellipsis">•••</span></div><div class="orb-wrapper"><div class="orb-glow"></div><div class="orb" id="voiceOrb"><span>✳</span></div><span class="orb-particle p1"></span><span class="orb-particle p2"></span><span class="orb-particle p3"></span></div><h2 id="voiceHeadline">Ready to listen</h2><p id="voiceDescription">Select the microphone to start a voice conversation.</p><div class="waveform" id="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="voice-panel-footer"><div><span class="panel-muted">INPUT</span><select id="inputModeSelect" aria-label="Speech input mode"><option value="cloud">Live AI voice · English / العربية</option><option value="browser">Browser speech</option><option value="local">Local Whisper · push to talk</option><option value="stream">Live streaming · local VAD</option></select></div><div><span class="panel-muted">OUTPUT</span><strong id="voiceOutputMode">Browser speech</strong></div></div></section>
-
-            <section class="orders-panel" id="sample-orders"><div class="panel-section-head"><div><h3>Test orders</h3><p>Try these synthetic records</p></div><span class="tiny-demo">SAMPLE</span></div><div id="ordersList" class="orders-list"><span class="loading-text">Loading demo data…</span></div></section>
-            <section class="info-panel"><div class="info-icon">ⓘ</div><div><strong>Portfolio demonstration</strong><p>This is not connected to a real store, customer database, payment system, or live support team. <span id="modelStatus">Checking AI configuration…</span>. When hosted AI is enabled, conversation messages are sent to Groq for processing. Do not enter real personal, payment or account data. Browser speech recognition may use a browser vendor's service. Hosted voice sends temporary audio to Groq for transcription and voice generation. Only synthetic support data should be used; please wear headphones to prevent echo.</p></div></section>
+            <section class="voice-panel" id="voice-agent" aria-label="Voice conversation settings">
+              <div class="panel-top"><span class="panel-kicker"><span class="tiny-orb"></span> REAL-TIME VOICE</span><span class="panel-version">BETA</span></div>
+              <div class="orb-wrapper"><div class="orb-glow"></div><div class="orb" id="voiceOrb"><svg class="icon"><use href="#i-spark"/></svg></div><span class="orb-particle p1"></span><span class="orb-particle p2"></span><span class="orb-particle p3"></span></div>
+              <h2 id="voiceHeadline">Ready to listen</h2><p id="voiceDescription">Start speaking and have a natural conversation with SADA.</p>
+              <div class="waveform" id="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <button class="voice-cta" type="button" id="voicePanelBtn"><svg class="icon"><use href="#i-mic"/></svg><span id="voicePanelBtnText">Start voice session</span><svg class="icon voice-cta-arrow"><use href="#i-arrow"/></svg></button>
+              <div class="voice-panel-footer"><div><label class="panel-muted" for="inputModeSelect">VOICE ENGINE</label><select id="inputModeSelect" aria-label="Speech input mode"><option value="cloud">Live AI voice · English / العربية</option><option value="browser">Browser speech</option><option value="local">Local Whisper · push to talk</option><option value="stream">Live streaming · local VAD</option></select></div><div class="voice-output-row"><span class="panel-muted">VOICE OUTPUT</span><strong id="voiceOutputMode">Checking voice engine…</strong></div></div>
+            </section>
+            <section class="orders-panel" id="sample-orders"><div class="panel-section-head"><div><h3>Sample orders</h3><p>Try a customer lookup</p></div><span class="tiny-demo">DEMO DATA</span></div><div class="orders-list" id="ordersList"><span class="loading-text">Loading demo orders…</span></div></section>
+            <section class="info-panel"><span class="info-icon"><svg class="icon"><use href="#i-shield"/></svg></span><div><strong>Built for exploring, not real customers</strong><p>Orders and handoffs are simulated. <span id="modelStatus">Checking AI configuration…</span>. Voice audio and chat may be processed by Groq. Do not enter private information or payment details.</p></div></section>
           </aside>
         </div>
-        <footer class="footer"><span>© SADA Voice AI • FastAPI + WebSockets + optional Groq AI</span><span>English / العربية <span class="footer-dot">·</span> Demo environment</span></footer>
-      </section>
+        <footer class="footer"><span><span class="footer-spark">✳</span> SADA Studio <span class="footer-dot">•</span> Intelligent conversations, thoughtfully built.</span><span>Public sandbox <span class="footer-dot">•</span> <a href="https://github.com/FaizanAKhan786/sada-voice-ai" target="_blank" rel="noopener noreferrer">View source <svg class="icon"><use href="#i-external"/></svg></a></span></footer>
+      </div>
     </main>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
