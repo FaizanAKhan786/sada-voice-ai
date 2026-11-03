@@ -8,12 +8,6 @@ on:
       - scripts/smoke_voice_public.py
       - .github/workflows/voice-smoke.yml
   workflow_dispatch:
-    inputs:
-      require_hosted_tts:
-        description: "Require actual Groq Orpheus WAV (after accepting model terms)"
-        required: false
-        type: boolean
-        default: false
 jobs:
   hosted-voice:
     runs-on: ubuntu-latest
@@ -26,5 +20,5 @@ jobs:
       - run: pip install 'websockets>=14,<17'
       - name: Verify one synthetic voice turn through public SADA
         env:
-          REQUIRE_HOSTED_TTS: ${{ github.event_name == 'workflow_dispatch' && inputs.require_hosted_tts && '1' || '0' }}
+          REQUIRE_HOSTED_TTS: '1'
         run: python scripts/smoke_voice_public.py
