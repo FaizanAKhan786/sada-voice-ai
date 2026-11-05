@@ -9,7 +9,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Portfolio%20Prototype-7C3AED)
 
-[Live demo](https://sada-voice-ai.onrender.com) · [Quick start](#quick-start) · [Architecture](#architecture) · [Deployment notes](docs/public-deployment.md)
+[Hosted demo (availability unverified)](https://sada-voice-ai.onrender.com) · [Quick start](#quick-start) · [Architecture](#architecture) · [Deployment notes](docs/public-deployment.md)
 
 </div>
 
@@ -21,7 +21,7 @@ SADA is a **voice and text customer-support playground** with English/Arabic sam
 
 ### Try the demo
 
-**[Open SADA Studio](https://sada-voice-ai.onrender.com)** (Render free hosting may take time to wake up).
+**[Open the hosted demo](https://sada-voice-ai.onrender.com)**. Its current availability could not be independently confirmed; free hosting may sleep or be unavailable.
 
 Try `Where is ORD-1001?`, `Can I return an item?` or `وين طلبي ORD-١٠٠٢؟`. Do not submit personal or real customer information.
 
