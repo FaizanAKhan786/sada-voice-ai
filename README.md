@@ -95,4 +95,8 @@ The repo contains [CI workflows](.github/workflows/) and a [Render Blueprint](re
 
 **Scope:** no real orders, verified identity, payments, CRM, telephony or human agent handoff. AI responses can be inaccurate. The public demo should be used only with sample data.
 
+## Verification & benchmark protocol
+
+[Read the reproducible test and evaluation guide](docs/QUALITY.md). It documents the current automated checks, commands for model-dependent evaluations, and what results **do not** establish.
+
 [Issues](https://github.com/FaizanAKhan786/sada-voice-ai/issues) · [GitHub profile](https://github.com/FaizanAKhan786)
