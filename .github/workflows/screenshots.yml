@@ -1,0 +1,68 @@
+name: Real browser demo and screenshots
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '.github/workflows/screenshots.yml'
+      - 'scripts/capture_demo.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  browser-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout actual source
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install runtime and browser
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Start real local API and capture browser state
+        env:
+          PUBLIC_DEMO_MODE: "1"
+          ENABLE_STT: "0"
+          ENABLE_HOSTED_LLM: "0"
+          ENABLE_CLOUD_VOICE: "0"
+          ENABLE_OLLAMA: "0"
+        run: |
+          set -eu
+          uvicorn app.main:app --host 127.0.0.1 --port 8765 > /tmp/demo-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8765/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/ > /dev/null || { cat /tmp/demo-server.log; exit 1; }
+          python scripts/capture_demo.py || { tail -n 120 /tmp/demo-server.log; exit 1; }
+      - name: Attach genuine screenshots as run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-browser-demo-screenshots
+          path: docs/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Commit only screenshots verified by browser assertions
+        if: success() && github.event_name == 'push'
+        run: |
+          set -eu
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- docs/screenshots/sada-dashboard.png docs/screenshots/sada-order-demo.png
+          if git diff --cached --quiet; then
+            echo 'No screenshot changes to commit.'
+          else
+            git commit -m 'docs: capture verified real-browser product screenshots'
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
