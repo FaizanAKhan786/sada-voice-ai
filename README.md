@@ -101,6 +101,8 @@ pip install -r requirements-dev.txt
 pytest -q
 ```
 
+See [verified CI results with run links and methodology](docs/VERIFIED_RESULTS.md): 37 tests passed and 30/30 supplied synthetic intent fixtures matched in the referenced CI run. These are **not** speech or LLM accuracy benchmarks.
+
 The repo contains [CI workflows](.github/workflows/) and a [Render Blueprint](render.yaml). Deployment behavior, privacy restrictions and differences from a real contact-center system are covered in [public deployment notes](docs/public-deployment.md).
 
 **Scope:** no real orders, verified identity, payments, CRM, telephony or human agent handoff. AI responses can be inaccurate. The public demo should be used only with sample data.
