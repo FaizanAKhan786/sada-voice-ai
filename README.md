@@ -26,6 +26,8 @@
   <img src="docs/screenshots/sada-order-demo.png" alt="Genuine SADA browser screenshot of a synthetic ORD-1001 customer support conversation" width="100%" />
 </p>
 
+**[Watch the real-browser walkthrough recording](docs/demo/sada-order-walkthrough.webm)** · [Mobile screenshot](docs/screenshots/sada-mobile.png)
+
 *Both screenshots were produced by an automated Chromium run against the actual local FastAPI/WebSocket application using synthetic orders only. See [the reproducible demo walkthrough](docs/DEMO_WALKTHROUGH.md) and [the browser capture workflow](.github/workflows/screenshots.yml).*
 
 SADA is a **voice and text customer-support playground** with English/Arabic sample order flows, interruption handling, a SaaS-style interface and optional model-backed responses. It is a public **synthetic-data demonstration**, not a real call-center, CRM or payment integration.
