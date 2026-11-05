@@ -61,7 +61,8 @@ jobs:
           set -eu
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- docs/screenshots/sada-dashboard.png docs/screenshots/sada-order-demo.png docs/screenshots/sada-mobile.png docs/demo/sada-order-walkthrough.webm
+          git add -- docs/screenshots/sada-dashboard.png docs/screenshots/sada-order-demo.png docs/screenshots/sada-mobile.png
+          git add -f -- docs/demo/sada-order-walkthrough.webm
           if git diff --cached --quiet; then
             echo 'No screenshot changes to commit.'
           else
