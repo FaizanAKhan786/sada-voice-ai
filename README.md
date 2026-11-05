@@ -1,4 +1,7 @@
 <div align="center">
+  <a href="https://github.com/FaizanAKhan786/sada-voice-ai"><img src="docs/project-showcase.svg" alt="sada-voice-ai conceptual AI system architecture artwork" width="100%" /></a>
+  <br />
+
 
 # SADA Voice AI | صدى
 ### Bilingual, interruptible voice-support prototype
