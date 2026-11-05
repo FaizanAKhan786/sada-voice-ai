@@ -50,7 +50,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: real-browser-demo-screenshots
-          path: docs/screenshots/
+          path: |
+            docs/screenshots/
+            docs/demo/
           if-no-files-found: ignore
           retention-days: 30
       - name: Commit only screenshots verified by browser assertions
@@ -59,7 +61,7 @@ jobs:
           set -eu
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- docs/screenshots/sada-dashboard.png docs/screenshots/sada-order-demo.png
+          git add -- docs/screenshots/sada-dashboard.png docs/screenshots/sada-order-demo.png docs/screenshots/sada-mobile.png docs/demo/sada-order-walkthrough.webm
           if git diff --cached --quiet; then
             echo 'No screenshot changes to commit.'
           else
