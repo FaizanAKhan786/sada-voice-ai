@@ -10,6 +10,11 @@ These steps are reproducible on a **local copy of the actual FastAPI application
 
 Screenshot source: [`scripts/capture_demo.py`](../scripts/capture_demo.py). The script starts after the server is healthy and checks that the browser establishes its real WebSocket connection. It then sends **`Where is ORD-1001?`**, verifies the returned synthetic order ID, and captures the conversation. No external LLM, private customer data, or model accuracy claim is involved.
 
+## Real video and mobile preview
+
+- [Browser-recorded synthetic order walkthrough (WebM)](demo/sada-order-walkthrough.webm). This is the actual Playwright browser session showing the app and an order request, not a mocked animation or generated video.
+- [Mobile viewport screenshot](screenshots/sada-mobile.png), captured by Chromium at 390 × 844.
+
 ## Reproduce locally
 
 Requirements: Python 3.11+; Chrome/Chromium for the browser; Playwright if you want the same automated screenshot test.
