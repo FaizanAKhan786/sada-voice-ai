@@ -1,237 +1,95 @@
-# SADA Voice AI (صدى)
+<div align="center">
 
-**A bilingual voice-support prototype for Arabic and English, built with FastAPI, WebSockets and local speech models.**
+# SADA Voice AI | صدى
+### Bilingual, interruptible voice-support prototype
 
-![SADA dashboard showing a sample order-tracking conversation](docs/dashboard.png)
+**Arabic + English · Browser speech · WebSockets · FastAPI · Optional LLM**
 
 [![CI](https://github.com/FaizanAKhan786/sada-voice-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/FaizanAKhan786/sada-voice-ai/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)
-![Status](https://img.shields.io/badge/status-working%20prototype-6C63FF)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Portfolio%20Prototype-7C3AED)
 
-## Why this project
+[Live demo](https://sada-voice-ai.onrender.com) · [Quick start](#quick-start) · [Architecture](#architecture) · [Deployment notes](docs/public-deployment.md)
 
-Voice assistants are easy to demo with a single recorded clip. The harder part is the conversation around it: knowing when someone has finished speaking, letting them interrupt an answer, keeping a useful context window, and not inventing order information.
+</div>
 
-SADA is my attempt to put those pieces together in a small app that runs locally. It handles a few realistic support flows using **synthetic orders**, offers Arabic and English interfaces, and can use local Whisper transcription and an Ollama model for general questions. The interface and API are designed so each part can be tested independently.
+## Product preview
 
-This is a **portfolio prototype**, not a deployed call-center product. Order lookup, policies and handoffs are simulated. There are no live store, payment, CRM or human-agent integrations.
+![SADA Studio dashboard with sample customer-support flows](docs/dashboard.png)
 
-## SaaS-style dashboard
+SADA is a **voice and text customer-support playground** with English/Arabic sample order flows, interruption handling, a SaaS-style interface and optional model-backed responses. It is a public **synthetic-data demonstration**, not a real call-center, CRM or payment integration.
 
-The public SADA Studio interface now includes an interactive customer-support playground, a responsive workspace sidebar, a prominent voice-session launcher, server-wide demo counters, sample-order shortcuts, and clear hosted voice status. The browser UI uses no third-party dashboard framework and continues to work with the existing FastAPI/WebSocket backend. The environment is a **public synthetic-data demo**, not a multi-tenant SaaS product with real user accounts, subscriptions, or production CRM integration.
+### Try the demo
 
-Try the [live SADA Studio](https://sada-voice-ai.onrender.com) in Chrome or Edge. On phones, use the menu button to navigate between the playground, sample orders and activity. To explore the interface without a microphone, send the sample order prompt `Where is ORD-1001?`.
+**[Open SADA Studio](https://sada-voice-ai.onrender.com)** (Render free hosting may take time to wake up).
 
-## Demo
-
-The dashboard supports text chat, browser speech input/output and optional local streaming audio. Try these examples after starting the server:
-
-- `Where is ORD-1001?`
-- `Can I return a product?`
-- `وين طلبي ORD-١٠٠٢؟`
-- `I need to speak to a human agent.`
-
-The order lookup and handoff screens use invented data, so the demo works without credentials.
-
-## Features at a glance
-
-| Feature | How it works |
-|---|---|
-| Arabic + English | Bilingual intent handling and language-aware replies |
-| Streaming microphone audio | Browser AudioWorklet sends 16 kHz PCM frames to `/ws/live` |
-| Speech boundaries | WebRTC VAD, or an RMS-based fallback for development |
-| Speech-to-text | Optional faster-whisper, run at utterance boundaries |
-| Interruption | New speech cancels the active assistant response and browser playback |
-| Local LLM | Optional Qwen via Ollama, streamed for general FAQs only |
-| Predictable order flows | Deterministic workflows for synthetic orders, returns and escalation |
-| Quality checks | Pytest, a small bilingual intent test set and GitHub Actions |
-
-**Important distinction:** audio is transported continuously, but Whisper is called after an utterance ends. This is not word-by-word streaming ASR or a production telephony service.
-
-## Stack
-
-Python, FastAPI, WebSockets, JavaScript, AudioWorklet, faster-whisper, WebRTC VAD, Ollama and optional LangGraph. The default setup needs only the Python web dependencies; speech and LLM models are opt-in.
-
-## Hosted conversational AI (optional)
-
-SADA can use a hosted Groq model to generate conversational English/Arabic responses for demo policies, greetings and general support questions. **A server-side Groq API key is required**. Order facts and handoffs stay deterministic, and scripted responses remain available if the provider fails. In the live demo, the agent defaults to scripted mode until you set `GROQ_API_KEY` in Render.
-
-See [hosted AI setup](docs/hosted-ai.md). The browser never receives the key. Do not send real customer or payment data to this demo.
-
-## Public demo deployment (Render)
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/FaizanAKhan786/sada-voice-ai)
-
-The included [`render.yaml`](render.yaml) deploys the FastAPI app, web dashboard, and synthetic support workflows to a public HTTPS endpoint. **This is a lightweight demonstration:** browser speech features work where supported, while server-side Whisper/VAD and local Ollama inference are disabled. Render must be connected and approved in the repository owner's account before a public URL exists. See [public deployment notes](docs/public-deployment.md) for safeguards and limitations.
-
-## Quick start (text and browser-based voice)
-
-```bash
-cd sada-voice-ai
-python -m venv .venv
-source .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-Visit **http://127.0.0.1:8000**. Use the microphone input selector for browser recognition, local push-to-talk, or streaming local VAD. Chrome and Edge on desktop are recommended. For a remote device, use HTTPS with WebSocket Secure (`wss://`) and authentication before exposing the app.
-
-**Try:** `Where is my order?` → `ORD-1001`, `What is your return policy?`, `Talk to a human agent`, `وين طلبي ORD-١٠٠٢؟`, `كيف يمكن استرداد المبلغ؟`.
-
-## Enable local streaming speech and VAD
-
-```bash
-pip install -r requirements-vad.txt
-# On Linux/macOS:
-ENABLE_STT=1 WHISPER_MODEL=small uvicorn app.main:app --reload
-# PowerShell:
-# $env:ENABLE_STT="1"; $env:WHISPER_MODEL="small"; uvicorn app.main:app --reload
-```
-
-Select **Live streaming · local VAD** in the UI, press the microphone button once, speak, pause naturally, then speak again. You do not need to press to record individual turns. Press the mic again to stop and flush the final utterance. The browser uses an AudioWorklet and `getUserMedia` with echo cancellation, noise suppression and automatic gain control **when supported**. Use **headphones** so playback is not mistaken for a new utterance.
-
-With `webrtcvad-wheels` installed, VAD uses the WebRTC speech detector. Otherwise the fallback detects amplitude only and is not robust to noisy rooms. The VAD requires 16 kHz signed 16-bit mono little-endian frames, each 20 ms / 640 bytes, and uses a 3-frame start window and 30-frame end-silence window. Audio frames are sent to your own server over a WebSocket; browser speech recognition mode can instead rely on a browser vendor's service.
-
-**Offline preparation:** the first use of a named Whisper model may download weights. For air-gapped use, prefetch a compatible local faster-whisper model directory and set `WHISPER_MODEL=/absolute/path/to/model`. The runtime default is CPU INT8; CUDA can be configured using `WHISPER_DEVICE` / `WHISPER_COMPUTE` if supported. This dependency may be computationally heavy on a small laptop.
-
-To enable **only** the older push-to-talk mode, `pip install -r requirements-stt.txt` is enough. You do not need WebRTC VAD for upload-based transcription.
-
-## Enable the local bilingual conversational model
-
-Install [Ollama](https://ollama.com/) on the computer running the server, then:
-
-```bash
-ollama pull qwen3:4b
-pip install -r requirements-llm.txt
-ENABLE_OLLAMA=1 OLLAMA_MODEL=qwen3:4b uvicorn app.main:app --reload
-```
-
-The Qwen3 4B default is an **optional** local bilingual conversation model, not included in the ZIP. It generates streamed token chunks which appear progressively in the UI; completed sentences can be spoken while the answer is still being generated. It is used **only for general, non-workflow FAQs**. The system prompt grounds it in fake policies, caps the response length and forbids claims about real accounts or actions. These safeguards are not a proof of resistance to prompt injection or hallucination. For modest RAM/VRAM, try a smaller compatible Ollama model and set `OLLAMA_MODEL` accordingly.
-
-If Ollama is not running, the deterministic response is used. **Order-status, returns, refunds, shipping and handoff logic remain auditable and deterministic.** Optional LangGraph routing can be enabled separately:
-
-```bash
-pip install -r requirements-graph.txt
-USE_LANGGRAPH=1 uvicorn app.main:app --reload
-```
+Try `Where is ORD-1001?`, `Can I return an item?` or `وين طلبي ORD-١٠٠٢؟`. Do not submit personal or real customer information.
 
 ## Architecture
 
 ```mermaid
-flowchart LR
-    MIC[Browser microphone] --> WORKLET[AudioWorklet PCM16 16 kHz]
-    WORKLET -->|20 ms binary frames| WS[FastAPI /ws/live]
-    WS --> VAD[WebRTC VAD / energy fallback]
-    VAD -->|speech-ended segment| ASR[faster-whisper]
-    ASR --> ROUTER[Intent router / optional LangGraph]
-    TEXT[Typed chat] --> WS
-    WS --> ROUTER
-    ROUTER --> TOOL[Demo orders and support workflows]
-    ROUTER --> FAQ[Optional Ollama NDJSON streaming]
-    TOOL --> WS
-    FAQ --> WS
-    WS -->|JSON events + tokens| UI[Browser chat UI]
-    UI --> TTS[Browser speechSynthesis]
-    VAD -->|speech-start, barge-in| CANCEL[Cancel model task and playback]
-    CANCEL --> UI
+flowchart TD
+    B["Browser UI + microphone"] --> W["WebSocket / text API"]
+    B --> BS["Browser speech recognition / synthesis"]
+    W --> V["Session + conversation routing"]
+    V --> R{"Support intent"}
+    R -->|Order / return| D["Deterministic synthetic-data workflow"]
+    R -->|General question| L["Optional hosted LLM / local Ollama"]
+    B --> A["Optional PCM AudioWorklet"]
+    A --> S["Server VAD + Whisper when enabled"]
+    S --> V
+    D --> OUT["Text / speech response"]
+    L --> OUT
+    OUT --> B
 ```
 
-### WebSocket protocol
+**Important:** The hosted demo relies primarily on browser features and optional hosted responses. It does **not** ship server-side Whisper/VAD or local Ollama inference on the free Render profile. Local streaming uses utterance-boundary transcription, not per-word streaming ASR.
 
-**Default dashboard endpoint:** `ws://127.0.0.1:8000/ws/live` (legacy text-only `/ws` retained for compatibility). The first message from the server is `{"type":"ready","sample_rate":16000,"audio_format":"pcm_s16le",...}`.
+## Features
 
-Outbound JSON commands:
+| Capability | Description |
+| --- | --- |
+| Bilingual flows | Arabic and English greetings, orders, returns and escalation |
+| Interruptible interactions | New speech can cancel an active assistant response |
+| Transport | WebSockets for live sessions and PCM audio when configured |
+| STT / TTS | Browser speech by default; optional local Whisper and hosted voice features |
+| LLM | Configurable Groq service or local Ollama for general answers |
+| Safety in the demo | Synthetic orders; basic origin and session-rate controls |
 
-```json
-{"type":"message","text":"Where is ORD-1001?"}
+## Quick start
+
+```bash
+git clone https://github.com/FaizanAKhan786/sada-voice-ai.git
+cd sada-voice-ai
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Also supported: `{"type":"set_language","language":"ar"}`, `{"type":"interrupt"}`, `{"type":"flush"}`, and `{"type":"reset"}`. Binary frames in the same socket contain raw 16 kHz PCM16 little-endian mono samples, nominally 640 bytes per frame. The browser worklet handles capture and resampling automatically.
+Open [localhost:8000](http://127.0.0.1:8000) and check [the health endpoint](http://127.0.0.1:8000/api/health).
 
-Events include `speech_started`, `speech_ended`, `transcript`, `answer_start`, `answer_delta`, `answer`, `interrupted`, `no_speech`, `reset_complete`, and `error`. Token streaming is optional and happens **only for general FAQ responses when Ollama is enabled**. All sessions are connection-local, all audio segments are transient, and transcripts are only exported explicitly in the browser.
+For additional local components:
 
-### REST endpoints
+| Optional capability | Dependencies / guide |
+| --- | --- |
+| Whisper STT | [`requirements-stt.txt`](requirements-stt.txt), then `ENABLE_STT=1` |
+| Local model responses | [`requirements-llm.txt`](requirements-llm.txt), Ollama and `ENABLE_OLLAMA=1` |
+| Server-side voice activity detection | [`requirements-vad.txt`](requirements-vad.txt) |
+| Hosted AI | [Hosted AI guide](docs/hosted-ai.md) |
+| Streaming voice details | [Voice architecture](docs/voice-ai.md) |
 
-| Endpoint | Purpose |
-|---|---|
-| `GET /` | Dashboard |
-| `GET /api/health` | Server health |
-| `GET /api/config` | Enabled optional features |
-| `GET /api/demo-orders` | Fictional records |
-| `GET /api/stats` | In-memory counters |
-| `POST /api/transcribe` | Optional turn-based local STT |
-| `WS /ws` | Legacy turn-based text WebSocket |
-| `WS /ws/live` | Streaming audio and cancellable text/LLM WebSocket |
+The feature flags default to conservative settings; consult [`.env.example`](.env.example) and the linked notes before switching on external AI services.
 
-## Tests and evaluation
+## Quality and deployment
 
 ```bash
 pip install -r requirements-dev.txt
-python -m pytest -q
-python -m scripts.evaluate
-node --check web/app.js   # optional Node.js syntax check
+pytest -q
 ```
 
-Tests cover deterministic English/Arabic workflows, HTTP endpoints, WebSocket sessions, VAD segmentation, audio-to-transcript events using a **mock** ASR, token streaming using a **mock** Ollama generator, and task cancellation. The 30 bilingual intent examples are a small curated dataset, **not an independent benchmark**. The project does not report validated real-device ASR word error rate, voice latency, hallucination rate, or customer task completion.
+The repo contains [CI workflows](.github/workflows/) and a [Render Blueprint](render.yaml). Deployment behavior, privacy restrictions and differences from a real contact-center system are covered in [public deployment notes](docs/public-deployment.md).
 
-## Docker
+**Scope:** no real orders, verified identity, payments, CRM, telephony or human agent handoff. AI responses can be inaccurate. The public demo should be used only with sample data.
 
-```bash
-docker build -t sada-voice-ai .
-docker run --rm -p 8000:8000 sada-voice-ai
-```
-
-The default image intentionally excludes Whisper, VAD wheels, and Ollama/model weights. Install them in a separate deployment environment if required. Do **not** publicly expose the unauthenticated demo server or its sample API without suitable security controls.
-
-## Before connecting real customers
-
-1. Enforce authenticated API and WebSocket connections; validate origin, per-order authorization, per-user limits, and least-privileged tool access.
-2. Integrate a synthetic CRM in development, then require explicit human approval for financial/order mutations in production.
-3. Add bounded inference queues and background-worker isolation. Cancelling a Python `asyncio.to_thread` await does **not** forcibly stop the underlying Whisper inference thread.
-4. Add privacy consent, audio handling/retention rules, transport encryption, audited request metadata, and test-driven resilience to prompt injection.
-5. Replace browser-specific TTS with controlled English/Arabic streaming audio, integrate AEC, evaluate accents/dialects and noisy conditions, and benchmark first-token/first-audio/turn latency on real hardware.
-6. Build held-out intent/ASR/hallucination test sets and load tests; add OTEL/Prometheus and reliable CRMs/handoff infrastructure.
-
-## GitHub-ready layout
-
-```text
-sada-voice-ai/
-├── app/
-│   ├── main.py           # REST, legacy WebSocket, and /ws/live wiring
-│   ├── live.py           # streaming audio controls and cancellation
-│   ├── streaming.py      # WebRTC VAD / RMS endpointing
-│   ├── speech.py         # file and streamed PCM faster-whisper
-│   ├── llm.py            # optional Ollama incremental generation
-│   ├── engine.py         # safe synthetic order/policy workflows
-│   └── graph.py          # optional LangGraph
-├── web/
-│   ├── index.html
-│   ├── app.js            # client events, barge-in, TTS, UI
-│   ├── pcm-worklet.js    # 20ms PCM audio packets
-│   └── style.css
-├── tests/                # 18 automated tests
-├── scripts/              # 30-example intent evaluation
-├── .github/workflows/ci.yml
-├── .env.example
-├── requirements*.txt
-├── Dockerfile
-└── README.md
-```
-
-**Resume entry, after running and validating locally:**
-
-> **SADA | Arabic-English Streaming Voice Support Agent** | FastAPI, WebSockets, AudioWorklet, faster-whisper, WebRTC VAD, Ollama, Docker
->
-> - Engineered a bilingual voice-support demo with 20 ms PCM audio streaming, silence-based endpointing, cancellable conversations and sentence-level browser speech playback.
-> - Implemented deterministic order tracking and human-handoff simulation with optional policy-grounded, locally streamed LLM answers.
-> - Created automated API, audio-stream, interrupt-handling and bilingual intent tests, with CI and synthetic data safeguards.
-
-Do not claim the optional ASR/LLM operated successfully on real audio/model hardware until you run the integrations yourself. No private data, API secrets, model weights or audio recordings are included in the repository.
-
-## References
-
-- [FastAPI WebSockets](https://fastapi.tiangolo.com/advanced/websockets/)
-- [MDN AudioWorkletProcessor](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/process)
-- [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
-- [WebRTC VAD](https://github.com/wiseman/py-webrtcvad)
-- [Ollama streaming chat API](https://docs.ollama.com/api)
+[Issues](https://github.com/FaizanAKhan786/sada-voice-ai/issues) · [GitHub profile](https://github.com/FaizanAKhan786)
